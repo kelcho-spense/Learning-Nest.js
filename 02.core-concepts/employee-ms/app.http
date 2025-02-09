@@ -5,10 +5,10 @@
 GET {{localhost}}/employees
 
 ### GET /employees/:id
-GET {{localhost}}/employees/1
+GET {{localhost}}/employees/3
 
 ### GET /employees/search?name=IT
-GET {{localhost}}/employees/search?name=IT
+GET {{localhost}}/employees?name=john
 
 ### POST /employees
 POST {{localhost}}/employees

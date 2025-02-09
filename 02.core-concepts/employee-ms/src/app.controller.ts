@@ -47,18 +47,18 @@ export class AppController {
     return this.employees;
   }
 
-  @Get(':id') // http://localhost:3000/employees/1
-  findOne(@Param(ParseIntPipe) params: number): IEmployee | string {
-    const employee = this.employees.find((e) => e.id === params);
-    if (!employee) {
-      return `Employee with id: ${params} not found`;
-    }
-    return employee;
-  }
-
-  @Get('search/') // http://localhost:3000/employees/search?name=John
+  @Get() // http://localhost:3000/employees?name=John
   search(@Query('name') name: string): IEmployee[] {
     return this.employees.filter((e) => e.name.toLowerCase().includes(name));
+  }
+
+  @Get(':id') // http://localhost:3000/employees/1
+  findOne(@Param('id', ParseIntPipe) idParam: number): IEmployee | string {
+    const employee = this.employees.find((e) => e.id === idParam);
+    if (!employee) {
+      return `Employee with id: ${idParam} not found`;
+    }
+    return employee;
   }
 
   @Post() // http://localhost:3000/employees
@@ -77,7 +77,7 @@ export class AppController {
   @Put(':id') // http://localhost:3000/employees/1
   update(
     @Body() data: Partial<IEmployee>,
-    @Param(ParseIntPipe) param: number,
+    @Param('id', ParseIntPipe) param: number,
   ): IEmployee | string {
     const employee = this.employees.find((e) => e.id === param);
     if (!employee) {
@@ -96,7 +96,7 @@ export class AppController {
   }
 
   @Delete(':id') // http://localhost:3000/employees/1
-  delete(@Param(ParseIntPipe) params: number): string {
+  delete(@Param('id', ParseIntPipe) params: number): string {
     const index = this.employees.findIndex((e) => e.id === params);
     this.employees.splice(index, 1);
     return `Employee with id: ${index} deleted`;
