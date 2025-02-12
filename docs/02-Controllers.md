@@ -62,7 +62,7 @@ Nest aims to be a platform-agnostic framework. Platform independence makes it po
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **platform-fastify** | [Fastify](https://www.fastify.io/) is a high performance and low overhead framework highly focused on providing maximum efficiency and speed. Read how to use it [here](https://docs.nestjs.com/techniques/performance).                                                                                                                |
 
-#### Running the application[#](https://docs.nestjs.com/first-steps#running-the-application)
+#### Running the application
 
 Once the installation process is complete, you can run the following command at your OS command prompt to start the application listening for inbound HTTP requests:
 
@@ -76,7 +76,7 @@ or
 npm run start
 ```
 
-#### Linting and formatting[#](https://docs.nestjs.com/first-steps#linting-and-formatting)
+#### Linting and formatting
 
 [CLI](https://docs.nestjs.com/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
 
@@ -126,8 +126,6 @@ export class CatsController {
 
 > **Hint🤔** To create a controller using the CLI, simply execute the `nest g controller [name]` command.
 
-
-
 #### Request object
 
 Handlers often need access to the client’s **request** details. Nest provides access to the [request object](https://expressjs.com/en/api.html#req) from the underlying platform (Express by default). You can access the request object by instructing Nest to inject it using the `@Req()` decorator in the handler’s signature.
@@ -150,7 +148,6 @@ export class CatsController {
 
 > **Hint** To take advantage of `express` typings (like in the `request: Request` parameter example above), make sure to install the `@types/express` package.
 >
->
 > he request object represents the HTTP request and contains properties for the query string, parameters, HTTP headers, and body (read more [here](https://expressjs.com/en/api.html#req)). In most cases, you don't need to manually access these properties. Instead, you can use dedicated decorators like `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the corresponding platform-specific objects they represent.
 >
 > | `@Request(), @Req()`      | `req`                                 |
@@ -166,8 +163,6 @@ export class CatsController {
 > | `@HostParam()`            | `req.hosts`                           |
 >
 > ^* ^For compatibility with typings across underlying HTTP platforms (e.g., Express and Fastify), Nest provides `@Res()` and `@Response()` decorators. `@Res()` is simply an alias for `@Response()`. Both directly expose the underlying native platform `response` object interface. When using them, you should also import the typings for the underlying library (e.g., `@types/express`) to take full advantage. Note that when you inject either `@Res()` or `@Response()` in a method handler, you put Nest into **Library-specific mode** for that handler, and you become responsible for managing the response. When doing so, you must issue some kind of response by making a call on the `response` object (e.g., `res.json(...)` or `res.send(...)`), or the HTTP server will hang.
-
-
 
 #### Resources
 
@@ -199,7 +194,6 @@ It's that simple. Nest provides decorators for all of the standard HTTP methods:
 
 As mentioned, the default **status code** for responses is always  **200** , except for POST requests, which default to  **201** . You can easily change this behavior by using the `@HttpCode(...)` decorator at the handler level.
 
-
 ```typescript
 
 @Post()
@@ -211,14 +205,11 @@ create() {
 
 > **Hint** Import `HttpCode` from the `@nestjs/common` package.
 
-
-
 #### Redirection
 
 To redirect a response to a specific URL, you can either use a `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
 
 `@Redirect()` takes two arguments, `url` and `statusCode`, both are optional. The default value of `statusCode` is `302` (`Found`) if omitted.
-
 
 ```typescript
 
@@ -229,7 +220,6 @@ To redirect a response to a specific URL, you can either use a `@Redirect()` dec
 > **Hint**Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object following the `HttpRedirectResponse` interface (from `@nestjs/common`).
 
 Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
-
 
 ```typescript
 
@@ -248,7 +238,6 @@ Routes with static paths won’t work when you need to accept **dynamic data** a
 
 > **Hint**Routes with parameters should be declared after any static paths. This prevents the parameterized paths from intercepting traffic destined for the static paths.
 
-
 ```typescript
 
 @Get(':id')
@@ -262,7 +251,6 @@ The `@Param()` decorator is used to decorate a method parameter (in the example 
 
 > **Hint**Import `Param` from the `@nestjs/common` package.
 
-
 ```typescript
 
 @Get(':id')
@@ -270,7 +258,6 @@ findOne(@Param('id') id: string): string {
   return `This action returns a #${id} cat`;
 }
 ```
-
 
 #### Full resource sample
 
