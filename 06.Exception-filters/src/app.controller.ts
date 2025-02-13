@@ -5,6 +5,9 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -30,6 +33,23 @@ export class AppController {
     return this.appService.search(name);
   }
 
+  @Get('redirect') //  Redirect to /employees
+  @Redirect('http://localhost:3000/employees')
+  redirect(): string {
+    return 'Redirected to /employees';
+  }
+
+  @Get('error') // http://localhost:3000/employees/error
+  showErrors(): void {
+    // throw new Error('This is a test error');
+    // throw new HttpException('This is a test exception error', HttpStatus.BAD_REQUEST);
+    throw new HttpException('Item created successfully', HttpStatus.CREATED);
+
+    // throw new ForbiddenException('This is forbidden exception error');
+    // throw new NotFoundException('This is a notfound error');
+    // throw new BadRequestException('This is a bad request error');
+  }
+
   @Get(':id') // http://localhost:3000/employees/1
   findOne(@Param('id', ParseIntPipe) idParam: number): IEmployee | string {
     return this.appService.findOne(idParam);
@@ -51,19 +71,5 @@ export class AppController {
   @Delete(':id') // http://localhost:3000/employees/1
   delete(@Param('id', ParseIntPipe) params: number): string {
     return this.appService.delete(params);
-  }
-
-  @Get('redirect') //  Redirect to /employees
-  @Redirect('http://localhost:3000/employees')
-  redirect(): string {
-    return 'Redirected to /employees';
-  }
-
-  @Get('error') // http://localhost:3000/employees/error
-  showErrors(): void {
-    // throw new Error('This is a test error');
-    throw new ForbiddenException('This is forbidden exception error');
-    // throw new NotFoundException('This is a notfound error');
-    // throw new BadRequestException('This is a bad request error');
   }
 }

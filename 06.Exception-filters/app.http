@@ -32,3 +32,6 @@ Content-Type: application/json
 
 ### DELETE /employees/:id
 DELETE {{localhost}}/employees/1
+
+### GET /employees/exception
+http://localhost:3000/employees/error
