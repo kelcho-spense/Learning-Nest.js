@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -54,5 +57,13 @@ export class AppController {
   @Redirect('http://localhost:3000/employees')
   redirect(): string {
     return 'Redirected to /employees';
+  }
+
+  @Get('error') // http://localhost:3000/employees/error
+  showErrors(): void {
+    // throw new Error('This is a test error');
+    throw new ForbiddenException('This is forbidden exception error');
+    // throw new NotFoundException('This is a notfound error');
+    // throw new BadRequestException('This is a bad request error');
   }
 }

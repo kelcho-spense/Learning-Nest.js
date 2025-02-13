@@ -1,0 +1,34 @@
+
+@localhost = http://localhost:3000
+
+### GET /employees
+GET {{localhost}}/employees
+
+### GET /employees/:id
+GET {{localhost}}/employees/3
+
+### GET /employees/search?name=IT
+GET {{localhost}}/employees?name=john
+
+### POST /employees
+POST {{localhost}}/employees
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "age": 30,
+    "department": "IT"
+}
+
+### PUT /employees/:id
+PUT {{localhost}}/employees/1
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "age": 30,
+    "department": "IT"
+}
+
+### DELETE /employees/:id
+DELETE {{localhost}}/employees/1
