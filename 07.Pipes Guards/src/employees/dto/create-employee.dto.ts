@@ -1,4 +1,5 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { Role } from '../enums/role.enum';
 export class CreateEmployeeDto {
   @IsOptional()
   @IsInt()
@@ -12,4 +13,7 @@ export class CreateEmployeeDto {
 
   @IsString()
   department: string;
+
+  @IsEnum(Role)
+  role: Role = Role.User;
 }

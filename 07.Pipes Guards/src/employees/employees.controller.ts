@@ -13,18 +13,22 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
 import { RolesGuard } from './guards/roles.guards';
+import { Roles } from './decorator/roles.decorator';
+import { Role } from './enums/role.enum';
 
 @UseGuards(RolesGuard)
 @Controller('employees')
 export class EmployeesController {
-  constructor(private readonly employeesService: EmployeesService) {}
+  constructor(private readonly employeesService: EmployeesService) { }
 
   @Post()
+  @Roles(Role.Admin)
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeesService.create(createEmployeeDto);
   }
 
   @Get()
+  @Roles(Role.Admin)
   findAll(): CreateEmployeeDto[] {
     return this.employeesService.findAll();
   }

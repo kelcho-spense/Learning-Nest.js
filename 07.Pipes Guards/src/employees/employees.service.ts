@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
+import { Role } from './enums/role.enum';
 @Injectable()
 export class EmployeesService {
   public employees: CreateEmployeeDto[] = [
@@ -8,18 +9,21 @@ export class EmployeesService {
       name: 'John Doe',
       age: 30,
       department: 'IT',
+      role: Role.Admin,
     },
     {
       id: 2,
       name: 'Jane Doe',
       age: 25,
       department: 'HR',
+      role: Role.User,
     },
     {
       id: 3,
       name: 'John Smith',
       age: 35,
       department: 'Finance',
+      role: Role.User,
     },
   ];
   findAll(): CreateEmployeeDto[] {
@@ -42,13 +46,14 @@ export class EmployeesService {
     }
     return employee;
   }
-  create(data: Partial<CreateEmployeeDto>): CreateEmployeeDto {
+  create(data: CreateEmployeeDto): CreateEmployeeDto {
     const lastId = this.employees[this.employees.length - 1].id;
-    const newEmployee = {
+    const newEmployee: CreateEmployeeDto = {
       id: lastId + 1,
-      name: data.name!,
-      age: data.age!,
-      department: data.department!,
+      name: data.name,
+      age: data.age,
+      department: data.department,
+      role: data.role || Role.User,
     };
     this.employees.push(newEmployee);
     return newEmployee;
