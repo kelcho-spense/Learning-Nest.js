@@ -8,11 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
-import { CreateEmployeeDto } from './dto';
-import { UpdateEmployeeDto } from './dto';
+import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
+import { RolesGuard } from './guards/roles.guards';
 
+@UseGuards(RolesGuard)
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
