@@ -76,10 +76,7 @@ npx prisma db push
 # (It can overwrite data if your schema changes affect existing tables or columns, so it’s best for early-stage development or prototyping.)
 ```
 
-
-
 ### **PostgreSQL CLI**
-
 
 Here are the CLI commands to check the created tables in your PostgreSQL database. First, connect to the database container, then use psql to inspect the tables:
 
@@ -105,8 +102,7 @@ docker exec -it employee-db-container psql -U postgres -d employee-db
 \q
 ```
 
-
-## Compile and run the project
+## Nest CLI Compile and run the project
 
 ```bash
 # development
@@ -119,17 +115,32 @@ pnpm run start:dev
 pnpm run start:prod
 ```
 
-## Run tests
+## Nest CLI Generating Files
 
 ```bash
-# unit tests
-pnpm run test
+# Generate a New Module
+nest g module <module-name>
 
-# e2e tests
-pnpm run test:e2e
+# Generate a New Controller
+nest g controller <controller-name>
 
-# test coverage
-pnpm run test:cov
+# Generate a New Service
+nest g service <service-name>
+
+# Generate a New Resource (Module + Controller + Service)
+nest g middleware <middleware-name>
+
+# Generate a New Middleware
+nest g middleware <middleware-name>
+
+# Generate a New Guard
+nest g guard <guard-name>
+
+# Generate a New Interface
+nest g interface <interface-name>
+
+# Generate a New Enum
+nest g enum <enum-name>
 ```
 
 ## License
