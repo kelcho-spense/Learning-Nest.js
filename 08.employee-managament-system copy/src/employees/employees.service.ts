@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { Employee } from '@prisma/client';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private readonly databaseService: PrismaService) {}
-  create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    return this.databaseService.employee.create({
-      data: createEmployeeDto,
-    });
+  create(createEmployeeDto: CreateEmployeeDto) {
+    return 'This action adds a new employee';
   }
 
   findAll() {

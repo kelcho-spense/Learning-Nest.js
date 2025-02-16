@@ -16,8 +16,8 @@ Content-Type: application/json
 
 {
     "name": "John Doe",
-    "email": "john@Gmail.com",
-    "departmentId": 120
+    "age": 30,
+    "department": "IT"
 }
 
 ### PUT /employees/:id

@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// @name Employee
+/// @description Core employee entity representing staff members in the organization
+/// @relation Department One-to-Many - Each employee can belong to a single department (nullable)
+/// @relation Project Many-to-Many - Employees can work on multiple projects
+model Employee {
+  id               Int                @id @default(autoincrement())
+  name             String
+  email            String             @unique
+  departmentId     Int?
+  department       Department?        @relation("DepartmentEmployees", fields: [departmentId], references: [id])
+  projects         Project[]          @relation("EmployeeProjects")
+  EmployeeProjects EmployeeProjects[]
+}
+/// Employee <-> Project (n:n) 
+/// - Many-to-many relationship implemented via EmployeeProjects join table
+/// - Employee can work on multiple projects
+/// - Project can have multiple employees
+/// - Join table has composite primary key of [employeeId, projectId]
+/// Employee -> Department (1:n)
+/// - An employee belongs to one department (optional)
+/// - Department field is nullable (departmentId can be null) 
+/// - References department.id via departmentId foreign key
+
+/// @name Department  
+/// @description Represents organizational departments
+/// @relation Employee One-to-Many - Department contains multiple employees
+model Department {
+  id        Int        @id @default(autoincrement())
+  name      String
+  employees Employee[] @relation("DepartmentEmployees")
+}
+/// Department -> Employee (1:n)
+/// - One department can have many employees
+/// - References via Employee.departmentId back-relation
+
+/// @name Project
+/// @description Represents ongoing projects in the organization
+/// @relation Employee Many-to-Many - Projects have multiple assigned employees
+model Project {
+  id               Int                @id @default(autoincrement())
+  name             String
+  employees        Employee[]         @relation("EmployeeProjects")
+  EmployeeProjects EmployeeProjects[]
+}
+/// Project <-> Employee (n:n)
+/// - Projects can have multiple employees
+/// - Employees can work on multiple projects
+/// - Relationship managed through EmployeeProjects join table
+
+/// @name EmployeeProjects
+/// @description Join table for Employee-Project many-to-many relationship
+/// @relation Employee, Project - Links employees to their assigned projects
+
+/// Join Table Properties:
+/// - Composite primary key [employeeId, projectId]
+/// - References Employee.id and Project.id
+/// - Enables many-to-many relationship between Employee and Project
+model EmployeeProjects {
+  employeeId Int
+  projectId  Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  project    Project  @relation(fields: [projectId], references: [id])
+
+  @@id([employeeId, projectId])
+}
