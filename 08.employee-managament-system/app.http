@@ -1,4 +1,3 @@
-
 @localhost = http://localhost:8000
 
 ### GET /employees
@@ -33,5 +32,55 @@ Content-Type: application/json
 ### DELETE /employees/:id
 DELETE {{localhost}}/employees/1
 
-### GET /employees/exception
-http://localhost:3000/employees/error
+
+### Projects Endpoints ###
+
+### GET all projects
+GET {{localhost}}/projects
+
+### GET project by id
+GET {{localhost}}/projects/1
+
+### Create new project
+
+POST {{localhost}}/projects
+Content-Type: application/json
+
+{
+    "name": "Dummy project"
+}
+### Create many new projects
+POST {{localhost}}/projects/many
+Content-Type: application/json
+
+[
+    {       
+        "name": "E-commerce Platform"
+    },
+    {     
+        "name": "Mobile Banking App"
+    },
+    {       
+        "name": "Healthcare Management System"
+    },
+    {      
+        "name": "Inventory Management"
+    },
+    {      
+        "name": "Social Media Analytics"
+    }
+]
+
+### Update project
+PATCH {{localhost}}/projects/1
+Content-Type: application/json
+
+{
+    "name": "projectService"
+}
+
+### Delete project
+DELETE {{localhost}}/projects/1
+
+### find a project
+GET {{localhost}}/projects/122
