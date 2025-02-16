@@ -1,0 +1,19 @@
+services:
+  # Database service (PostgreSQL)
+  house-rental-db-dev-service:
+    image: postgres:17-alpine
+    container_name: house-rental-db-dev-container
+    ports:
+      - '5433:5432'
+    env_file:
+      - .env.development
+    volumes:
+      - postgres-data-dev-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5    
+  # API service (NESTJS)
+volumes:
+  postgres-data-dev-volume:
