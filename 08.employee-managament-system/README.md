@@ -15,7 +15,7 @@
 ## Project setup
 
 ```bash
-pnpm add prisma @prisma/client
+pnpm add prisma @prisma/client @nestjs/config
 ```
 
 ## Prisma ORM Commands

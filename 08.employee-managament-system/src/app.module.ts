@@ -7,7 +7,12 @@ import { EmployeeprojectsModule } from './employeeprojects/employeeprojects.modu
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [EmployeesModule, ProjectsModule, EmployeeprojectsModule, PrismaModule],
+  imports: [
+    EmployeesModule,
+    ProjectsModule,
+    EmployeeprojectsModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
