@@ -120,19 +120,21 @@ POST {{localhost}}/employees
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "email": "john@Gmail.com",
-    "departmentId": 2
+    "name": "Jane Doe",
+    "email": "jane@Gmail.com",
+    "departmentId": 3,
+    "projectIds": [2, 2,3]
 }
 
 ### PATCH /employees/:id
 PATCH {{localhost}}/employees/3
 Content-Type: application/json
 
-{   "name": "John Doe",
+{   
+    "name": "John Doe",
     "email": "john@Gmail.com",
-    "departmentId": 12,
-    "projectId": 13
+    "departmentId": 2,
+    "projectIds": [6,4,2,3]
 }
 
 ### DELETE /employees/:id

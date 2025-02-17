@@ -41,7 +41,7 @@ export class EmployeesService {
   }
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    const { departmentId, projectIds } = createEmployeeDto;
+    const { departmentId, projectIds, ...rest } = createEmployeeDto;
 
     if (departmentId) {
       await this.validateDepartmentId(departmentId);
@@ -52,7 +52,19 @@ export class EmployeesService {
     }
 
     return await this.databaseService.employee.create({
-      data: createEmployeeDto,
+      data: {
+        ...rest,
+        department: departmentId
+          ? { connect: { id: departmentId } }
+          : undefined,
+        projects: projectIds
+          ? { connect: projectIds.map((projectId) => ({ id: projectId })) }
+          : undefined,
+      },
+      include: {
+        department: true,
+        projects: true,
+      },
     });
   }
 
@@ -82,22 +94,35 @@ export class EmployeesService {
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    const { departmentId, projectId, ...rest } = updateEmployeeDto;
+    const { departmentId, projectIds, ...rest } = updateEmployeeDto;
+
+    // Validate if employee exists
+    await this.findOne(id);
+
+    // Validate department if provided
+    if (departmentId) {
+      await this.validateDepartmentId(departmentId);
+    }
+
+    // Validate projects if provided
+    if (projectIds && projectIds.length > 0) {
+      await this.validateProjectIds(projectIds);
+    }
 
     return await this.databaseService.employee.update({
       where: { id },
       data: {
         ...rest,
         department: departmentId
-          ? {
-              connect: { id: departmentId },
-            }
+          ? { connect: { id: departmentId } }
           : undefined,
-        projects: projectId
-          ? {
-              connect: { id: projectId },
-            }
+        projects: projectIds
+          ? { set: projectIds.map((projectId) => ({ id: projectId })) }
           : undefined,
+      },
+      include: {
+        department: true,
+        projects: true,
       },
     });
   }

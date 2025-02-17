@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateEmployeeDto } from './create-employee.dto';
-import { IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {
   @IsOptional()
@@ -16,6 +22,6 @@ export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {
   departmentId?: number;
 
   @IsOptional()
-  @IsNumber()
-  projectId?: number;
+  @IsArray()
+  projectId?: number[];
 }
