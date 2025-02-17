@@ -7,47 +7,52 @@ import { Employee } from '@prisma/client';
 export class EmployeesService {
   constructor(private readonly databaseService: PrismaService) {}
 
-  private async validateDepartmentId(departmentId?: number): Promise<void> {
-    if (departmentId) {
-      const department = await this.databaseService.department.findUnique({
-        where: { id: departmentId },
-      });
-      if (!department) {
-        throw new NotFoundException(
-          `Department with ID ${departmentId} not found`,
-        );
-      } else {
-        return;
-      }
+  private async validateDepartmentId(departmentId: number): Promise<void> {
+    const department = await this.databaseService.department.findUnique({
+      where: { id: departmentId },
+    });
+
+    if (!department) {
+      throw new NotFoundException(
+        `Department with id ${departmentId} not found`,
+      );
     }
   }
 
-  private async validateProjectIds(projectIds?: number[]): Promise<void> {
-    if (projectIds?.length) {
-      const projects = await this.databaseService.project.findMany({
-        where: { id: { in: projectIds } },
-      });
-      if (projects.length !== projectIds.length) {
-        throw new NotFoundException('One or more project IDs are invalid');
-      } else {
-        return;
-      }
+  private async validateProjectIds(projectIds: number[]): Promise<void> {
+    const projects = await Promise.all(
+      projectIds.map(async (projectId) => {
+        const project = await this.databaseService.project.findUnique({
+          where: { id: projectId },
+        });
+        return { id: projectId, exists: !!project };
+      }),
+    );
+
+    const invalidIds = projects
+      .filter((project) => !project.exists)
+      .map((project) => project.id);
+
+    if (invalidIds.length > 0) {
+      throw new NotFoundException(
+        `Projects with ids ${invalidIds.join(', ')} not found`,
+      );
     }
   }
+
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    if (createEmployeeDto.departmentId) {
-      await this.validateDepartmentId(createEmployeeDto.departmentId);
+    const { departmentId, projectIds } = createEmployeeDto;
+
+    if (departmentId) {
+      await this.validateDepartmentId(departmentId);
     }
-    if (createEmployeeDto.departmentId) {
-      await this.validateDepartmentId(createEmployeeDto.departmentId);
+
+    if (projectIds && projectIds.length > 0) {
+      await this.validateProjectIds(projectIds);
     }
 
     return await this.databaseService.employee.create({
       data: createEmployeeDto,
-      include: {
-        department: true,
-        projects: true,
-      },
     });
   }
 
@@ -76,27 +81,30 @@ export class EmployeesService {
     return employee;
   }
 
-  async update(
-    id: number,
-    updateEmployeeDto: UpdateEmployeeDto,
-  ): Promise<Employee> {
-    await this.findOne(id);
-
-    if (updateEmployeeDto.departmentId) {
-      await this.validateDepartmentId(updateEmployeeDto.departmentId);
-    }
-    if (updateEmployeeDto.projectIds) {
-      await this.validateProjectIds(updateEmployeeDto.projectIds);
-    }
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    const { departmentId, projectId, ...rest } = updateEmployeeDto;
 
     return await this.databaseService.employee.update({
       where: { id },
-      data: updateEmployeeDto,
+      data: {
+        ...rest,
+        department: departmentId
+          ? {
+              connect: { id: departmentId },
+            }
+          : undefined,
+        projects: projectId
+          ? {
+              connect: { id: projectId },
+            }
+          : undefined,
+      },
     });
   }
 
   async remove(id: number): Promise<Employee> {
     await this.findOne(id);
+
     return await this.databaseService.employee.delete({
       where: { id },
       include: {

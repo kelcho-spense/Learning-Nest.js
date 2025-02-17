@@ -1,38 +1,56 @@
 @localhost = http://localhost:8000
 
-### GET /employees
-GET {{localhost}}/employees
+### Departments Endpoints ###
 
-### GET /employees/:id
-GET {{localhost}}/employees/3
+### GET all departments
+GET {{localhost}}/departments
 
-### GET /employees/search?name=IT
-GET {{localhost}}/employees?name=john
+### GET department by id
+GET {{localhost}}/departments/1
 
-### POST /employees
-POST {{localhost}}/employees
+### Create new department
+POST {{localhost}}/departments
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "email": "john@Gmail.com",
-    "departmentId": 120
+    "name": "Dummy Department"
 }
 
-### PUT /employees/:id
-PUT {{localhost}}/employees/1
+### Create many new departments
+POST {{localhost}}/departments/many
+Content-Type: application/json
+
+[
+    {
+        "name": "IT Department"
+    },
+    {
+        "name": "HR Department"
+    },
+    {
+        "name": "Finance Department"
+    },
+    {
+        "name": "Marketing Department"
+    },
+    {
+        "name": "Operations Department"
+    }
+]
+
+### Update department
+PATCH {{localhost}}/departments/1
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "age": 30,
-    "department": "IT"
+    "name": "HR Department"
 }
 
-### DELETE /employees/:id
-DELETE {{localhost}}/employees/1
+### Delete department
+DELETE {{localhost}}/departments/1
 
-
+### Search department
+GET {{localhost}}/departments?name=IT
 ### Projects Endpoints ###
 
 ### GET all projects
@@ -84,3 +102,38 @@ DELETE {{localhost}}/projects/1
 
 ### find a project
 GET {{localhost}}/projects/122
+
+
+### Employee Endpoints ###
+
+### GET /employees
+GET {{localhost}}/employees
+
+### GET /employees/:id
+GET {{localhost}}/employees/1
+
+### GET /employees/search?name=IT
+GET {{localhost}}/employees?name=john
+
+### POST /employees
+POST {{localhost}}/employees
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@Gmail.com",
+    "departmentId": 2
+}
+
+### PATCH /employees/:id
+PATCH {{localhost}}/employees/3
+Content-Type: application/json
+
+{   "name": "John Doe",
+    "email": "john@Gmail.com",
+    "departmentId": 12,
+    "projectId": 13
+}
+
+### DELETE /employees/:id
+DELETE {{localhost}}/employees/1

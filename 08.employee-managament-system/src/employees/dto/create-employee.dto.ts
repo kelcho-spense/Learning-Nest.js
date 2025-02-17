@@ -12,6 +12,5 @@ export class CreateEmployeeDto {
 
   @IsOptional()
   @IsArray()
-  @IsInt({ each: true })
   projectIds?: number[];
 }
