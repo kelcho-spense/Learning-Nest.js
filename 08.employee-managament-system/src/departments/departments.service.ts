@@ -33,7 +33,7 @@ export class DepartmentsService {
       where: {
         name: {
           contains: name,
-          mode: 'insensitive',
+          mode: 'insensitive', // case-insensitive
         },
       },
       include: {

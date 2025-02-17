@@ -21,26 +21,28 @@ export class DepartmentsController {
   async create(@Body() createDepartmentDto: CreateDepartmentDto) {
     return await this.departmentsService.create(createDepartmentDto);
   }
-
-  @Post('many')
-  async createMany(@Body() createDepartmentDto: CreateDepartmentDto[]) {
-    return await this.departmentsService.createMany(createDepartmentDto);
+  // note when you query with http://localhost:3000/departments?name=IT place it above the a normal get request ie http://localhost:3000/departments
+  @Get()
+  async searchByName(@Query('name') name: string) {
+    console.log(name);
+    return await this.departmentsService.searchDepartmentByName(name);
   }
 
   @Get()
   async findAll() {
     return await this.departmentsService.findAll();
   }
-  @Get()
-  async searchByName(@Query('name') name: string) {
-    return await this.departmentsService.searchDepartmentByName(name);
+
+  @Post('many')
+  async createMany(@Body() createDepartmentDto: CreateDepartmentDto[]) {
+    return await this.departmentsService.createMany(createDepartmentDto);
   }
 
   @Delete('many')
   async removeAll(@Query('ids', new ParseArrayJsonPipe()) ids: number[]) {
     return await this.departmentsService.removeAll(ids);
   }
-
+// note all parameter requests should be placed below normal get request
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.departmentsService.findOne(id);

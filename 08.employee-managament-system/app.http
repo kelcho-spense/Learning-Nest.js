@@ -9,7 +9,7 @@ GET {{localhost}}/departments
 GET {{localhost}}/departments/1
 
 ### search department by name
-GET {{localhost}}/departments?name=IT
+GET {{localhost}}/departments?name=Department
 
 ### delete many departments where id is in [1,2,3]
 DELETE {{localhost}}/departments/many?ids=4,5,6
