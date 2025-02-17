@@ -8,6 +8,12 @@ GET {{localhost}}/departments
 ### GET department by id
 GET {{localhost}}/departments/1
 
+### search department by name
+GET {{localhost}}/departments?name=IT
+
+### delete many departments where id is in [1,2,3]
+DELETE {{localhost}}/departments/many?ids=4,5,6
+
 ### Create new department
 POST {{localhost}}/departments
 Content-Type: application/json

@@ -14,13 +14,28 @@ export class DepartmentsService {
   }
 
   async createMany(createDepartmentDto: CreateDepartmentDto[]) {
-    return this.databaseService.department.createMany({
+    return this.databaseService.department.createManyAndReturn({
       data: createDepartmentDto,
+      skipDuplicates: true,
     });
   }
 
   async findAll() {
     return this.databaseService.department.findMany({
+      include: {
+        employees: true,
+      },
+    });
+  }
+
+  async searchDepartmentByName(name: string) {
+    return this.databaseService.department.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
       include: {
         employees: true,
       },
@@ -59,5 +74,33 @@ export class DepartmentsService {
     });
 
     return `Department with ID ${id} has been deleted`;
+  }
+
+  async removeAll(ids: number[]) {
+    // check if ids exist and delete the ones which exist and return error on the missing ones
+    const departments = await this.databaseService.department.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    if (departments.length !== ids.length) {
+      const missingIds = ids.filter(
+        (id) => !departments.map((department) => department.id).includes(id),
+      );
+      throw new NotFoundException(
+        `Departments with IDs ${missingIds.join(', ')} not found`,
+      );
+    }
+
+    return await this.databaseService.department.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
   }
 }

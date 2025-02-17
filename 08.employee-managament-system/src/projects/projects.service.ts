@@ -14,6 +14,7 @@ export class ProjectsService {
   async createMany(createProjectDto: CreateProjectDto[]) {
     return await this.projectService.project.createMany({
       data: createProjectDto,
+      skipDuplicates: true,
     });
   }
 

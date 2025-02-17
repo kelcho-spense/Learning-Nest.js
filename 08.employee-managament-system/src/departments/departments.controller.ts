@@ -7,13 +7,29 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
+  ParseArrayPipe,
+  PipeTransform,
+  BadRequestException,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto, UpdateDepartmentDto } from './dto';
 
+class ParseArrayJsonPipe implements PipeTransform {
+  transform(value: string) {
+    try {
+      // Remove square brackets and split by comma
+      const arrayString = value.replace(/[\[\]]/g, '');
+      return arrayString.split(',').map(item => parseInt(item.trim(), 10));
+    } catch (error) {
+      throw new BadRequestException('Invalid array format');
+    }
+  }
+}
+
 @Controller('departments')
 export class DepartmentsController {
-  constructor(private readonly departmentsService: DepartmentsService) {}
+  constructor(private readonly departmentsService: DepartmentsService) { }
 
   @Post()
   async create(@Body() createDepartmentDto: CreateDepartmentDto) {
@@ -28,6 +44,15 @@ export class DepartmentsController {
   @Get()
   async findAll() {
     return await this.departmentsService.findAll();
+  }
+  @Get()
+  async searchByName(@Query('name') name: string) {
+    return await this.departmentsService.searchDepartmentByName(name);
+  }
+
+  @Delete('many')
+  async removeAll(@Query('ids', new ParseArrayJsonPipe()) ids: number[]) {
+    return await this.departmentsService.removeAll(ids);
   }
 
   @Get(':id')
@@ -47,4 +72,5 @@ export class DepartmentsController {
   async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.departmentsService.remove(id);
   }
+
 }
