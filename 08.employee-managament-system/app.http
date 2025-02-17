@@ -145,3 +145,34 @@ Content-Type: application/json
 
 ### DELETE /employees/:id
 DELETE {{localhost}}/employees/1
+
+
+
+### EmployeeProjects Endpoints ###
+
+### Create employee-project assignment
+POST {{localhost}}/employeeprojects
+Content-Type: application/json
+
+{
+    "employeeId": 1,
+    "projectId": 1
+}
+
+### Get all employee-project assignments
+GET {{localhost}}/employeeprojects
+
+### Get specific employee-project assignment
+GET {{localhost}}/employeeprojects?employeeId=1&projectId=1
+
+### Update employee-project assignment
+PATCH {{localhost}}/employeeprojects?employeeId=1&projectId=1
+Content-Type: application/json
+
+{
+    "employeeId": 1,
+    "projectId": 2
+}
+
+### Delete employee-project assignment
+DELETE {{localhost}}/employeeprojects?employeeId=1&projectId=1

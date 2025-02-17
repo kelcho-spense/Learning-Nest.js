@@ -42,7 +42,7 @@ export class DepartmentsController {
   async removeAll(@Query('ids', new ParseArrayJsonPipe()) ids: number[]) {
     return await this.departmentsService.removeAll(ids);
   }
-// note all parameter requests should be placed below normal get request
+  // note all parameter requests should be placed below normal get request
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.departmentsService.findOne(id);
