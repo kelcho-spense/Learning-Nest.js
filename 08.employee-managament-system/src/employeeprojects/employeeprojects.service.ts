@@ -6,6 +6,27 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class EmployeeprojectsService {
   constructor(private prisma: PrismaService) {}
 
+  private async validateProjectIds(projectIds: number): Promise<void> {
+    const projects = await Promise.all(
+      projectIds.map(async (projectId) => {
+        const project = await this.prisma.project.findUnique({
+          where: { id: projectId },
+        });
+        return { id: projectId, exists: !!project };
+      }),
+    );
+
+    const invalidIds = projects
+      .filter((project) => !project.exists)
+      .map((project) => project.id);
+
+    if (invalidIds.length > 0) {
+      throw new NotFoundException(
+        `Projects with ids ${invalidIds.join(', ')} not found`,
+      );
+    }
+  }
+
   async create(createEmployeeprojectDto: CreateEmployeeprojectDto) {
     const { employeeId, projectId } = createEmployeeprojectDto;
     return this.prisma.employeeProjects.create({
