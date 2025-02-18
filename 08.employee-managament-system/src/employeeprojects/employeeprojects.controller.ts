@@ -28,8 +28,11 @@ export class EmployeeprojectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.employeeprojectsService.findOne(id);
+  findOne(
+    @Param('employeeId', ParseIntPipe) employeeId: number,
+    @Param('projectId', ParseIntPipe) projectId: number,
+  ) {
+    return this.employeeprojectsService.findOne(employeeId, projectId);
   }
 
   @Patch(':employeeId/:projectId')
@@ -38,15 +41,18 @@ export class EmployeeprojectsController {
     @Param('projectId', ParseIntPipe) projectId: number,
     @Body() updateEmployeeprojectDto: UpdateEmployeeprojectDto,
   ) {
-    return this.employeeprojectsService.update({
+    return this.employeeprojectsService.update(
       employeeId,
       projectId,
       updateEmployeeprojectDto,
-    });
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.employeeprojectsService.remove(id);
+  remove(
+    @Param('employeeId', ParseIntPipe) employeeId: number,
+    @Param('projectId', ParseIntPipe) projectId: number,
+  ) {
+    return this.employeeprojectsService.remove(employeeId, projectId);
   }
 }

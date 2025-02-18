@@ -50,12 +50,11 @@ export class EmployeeprojectsService {
     return assignment;
   }
 
-  async update({
+  async update(
     employeeId: number,
     projectId: number,
     updateEmployeeprojectDto: UpdateEmployeeprojectDto,
-  }) {
-    const { employeeId, projectId, updateEmployeeprojectDto } = params;
+  ) {
     const assignment = await this.prisma.employeeProjects.update({
       where: {
         employeeId_projectId: {
