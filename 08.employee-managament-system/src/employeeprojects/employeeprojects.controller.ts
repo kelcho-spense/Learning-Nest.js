@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   ParseIntPipe,
   Query,
@@ -28,31 +27,24 @@ export class EmployeeprojectsController {
     return this.employeeprojectsService.findAll();
   }
 
-  @Get(':id')
+  @Get('one')
   findOne(
-    @Param('employeeId', ParseIntPipe) employeeId: number,
-    @Param('projectId', ParseIntPipe) projectId: number,
+    @Query('employeeId', ParseIntPipe) employeeId: number,
+    @Query('projectId', ParseIntPipe) projectId: number,
   ) {
+    console.log(employeeId, projectId);
     return this.employeeprojectsService.findOne(employeeId, projectId);
   }
 
-  @Patch(':employeeId/:projectId')
-  update(
-    @Param('employeeId', ParseIntPipe) employeeId: number,
-    @Param('projectId', ParseIntPipe) projectId: number,
-    @Body() updateEmployeeprojectDto: UpdateEmployeeprojectDto,
-  ) {
-    return this.employeeprojectsService.update(
-      employeeId,
-      projectId,
-      updateEmployeeprojectDto,
-    );
+  @Patch()
+  update(@Body() updateEmployeeprojectDto: UpdateEmployeeprojectDto) {
+    return this.employeeprojectsService.update(updateEmployeeprojectDto);
   }
 
-  @Delete(':id')
+  @Delete()
   remove(
     @Query('employeeId', ParseIntPipe) employeeId: number,
-    @Param('projectId', ParseIntPipe) projectId: number,
+    @Query('projectId', ParseIntPipe) projectId: number,
   ) {
     return this.employeeprojectsService.remove(employeeId, projectId);
   }

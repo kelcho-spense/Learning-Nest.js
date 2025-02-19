@@ -163,10 +163,10 @@ Content-Type: application/json
 GET {{localhost}}/employeeprojects
 
 ### Get specific employee-project assignment
-GET {{localhost}}/employeeprojects?employeeId=1&projectId=1
+GET {{localhost}}/employeeprojects/one?employeeId=3&projectId=2
 
 ### Update employee-project assignment
-PATCH {{localhost}}/employeeprojects?employeeId=1&projectId=1
+PATCH {{localhost}}/employeeprojects
 Content-Type: application/json
 
 {

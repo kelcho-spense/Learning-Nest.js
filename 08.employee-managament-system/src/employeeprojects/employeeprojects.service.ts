@@ -76,11 +76,9 @@ export class EmployeeprojectsService {
     return assignment;
   }
 
-  async update(
-    employeeId: number,
-    projectId: number,
-    updateEmployeeprojectDto: UpdateEmployeeprojectDto,
-  ) {
+  async update(updateEmployeeprojectDto: UpdateEmployeeprojectDto) {
+    const { employeeId, projectId } = updateEmployeeprojectDto;
+
     await this.validateEmployeeId(employeeId);
     await this.validateProjectId(projectId);
 
