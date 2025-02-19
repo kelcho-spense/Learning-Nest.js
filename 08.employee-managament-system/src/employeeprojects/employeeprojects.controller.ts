@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { EmployeeprojectsService } from './employeeprojects.service';
 import { CreateEmployeeprojectDto, UpdateEmployeeprojectDto } from './dto';
@@ -50,7 +51,7 @@ export class EmployeeprojectsController {
 
   @Delete(':id')
   remove(
-    @Param('employeeId', ParseIntPipe) employeeId: number,
+    @Query('employeeId', ParseIntPipe) employeeId: number,
     @Param('projectId', ParseIntPipe) projectId: number,
   ) {
     return this.employeeprojectsService.remove(employeeId, projectId);

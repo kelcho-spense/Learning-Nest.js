@@ -6,29 +6,34 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class EmployeeprojectsService {
   constructor(private prisma: PrismaService) {}
 
-  private async validateProjectIds(projectIds: number): Promise<void> {
-    const projects = await Promise.all(
-      projectIds.map(async (projectId) => {
-        const project = await this.prisma.project.findUnique({
-          where: { id: projectId },
-        });
-        return { id: projectId, exists: !!project };
-      }),
-    );
+  private async validateProjectId(projectId: number): Promise<boolean> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+    });
 
-    const invalidIds = projects
-      .filter((project) => !project.exists)
-      .map((project) => project.id);
+    if (!project) {
+      throw new NotFoundException(`Project with id ${projectId} not found`);
+    } else {
+      return true;
+    }
+  }
 
-    if (invalidIds.length > 0) {
-      throw new NotFoundException(
-        `Projects with ids ${invalidIds.join(', ')} not found`,
-      );
+  private async validateEmployeeId(employeeId: number): Promise<boolean> {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: employeeId },
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Employee with id ${employeeId} not found`);
+    } else {
+      return true;
     }
   }
 
   async create(createEmployeeprojectDto: CreateEmployeeprojectDto) {
     const { employeeId, projectId } = createEmployeeprojectDto;
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
     return this.prisma.employeeProjects.create({
       data: {
         employeeId,
@@ -76,6 +81,9 @@ export class EmployeeprojectsService {
     projectId: number,
     updateEmployeeprojectDto: UpdateEmployeeprojectDto,
   ) {
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
+
     const assignment = await this.prisma.employeeProjects.update({
       where: {
         employeeId_projectId: {
@@ -98,6 +106,9 @@ export class EmployeeprojectsService {
   }
 
   async remove(employeeId: number, projectId: number) {
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
+
     return this.prisma.employeeProjects.delete({
       where: {
         employeeId_projectId: {

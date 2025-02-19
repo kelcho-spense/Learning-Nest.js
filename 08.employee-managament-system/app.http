@@ -155,8 +155,8 @@ POST {{localhost}}/employeeprojects
 Content-Type: application/json
 
 {
-    "employeeId": 1,
-    "projectId": 1
+    "employeeId": 3,
+    "projectId": 2
 }
 
 ### Get all employee-project assignments
