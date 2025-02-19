@@ -4,8 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { EmployeeprojectsService } from './employeeprojects.service';
 import { CreateEmployeeprojectDto, UpdateEmployeeprojectDto } from './dto';
@@ -26,21 +27,25 @@ export class EmployeeprojectsController {
     return this.employeeprojectsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeeprojectsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateEmployeeprojectDto: UpdateEmployeeprojectDto,
+  @Get('one')
+  findOne(
+    @Query('employeeId', ParseIntPipe) employeeId: number,
+    @Query('projectId', ParseIntPipe) projectId: number,
   ) {
-    return this.employeeprojectsService.update(+id, updateEmployeeprojectDto);
+    console.log(employeeId, projectId);
+    return this.employeeprojectsService.findOne(employeeId, projectId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeeprojectsService.remove(+id);
+  @Patch()
+  update(@Body() updateEmployeeprojectDto: UpdateEmployeeprojectDto) {
+    return this.employeeprojectsService.update(updateEmployeeprojectDto);
+  }
+
+  @Delete()
+  remove(
+    @Query('employeeId', ParseIntPipe) employeeId: number,
+    @Query('projectId', ParseIntPipe) projectId: number,
+  ) {
+    return this.employeeprojectsService.remove(employeeId, projectId);
   }
 }

@@ -1,11 +1,122 @@
-
 @localhost = http://localhost:8000
+
+### Departments Endpoints ###
+
+### GET all departments
+GET {{localhost}}/departments
+
+### GET department by id
+GET {{localhost}}/departments/1
+
+### search department by name
+GET {{localhost}}/departments?name=Department
+
+### delete many departments where id is in [1,2,3]
+DELETE {{localhost}}/departments/many?ids=4,5,6
+
+### Create new department
+POST {{localhost}}/departments
+Content-Type: application/json
+
+{
+    "name": "Dummy Department"
+}
+
+### Create many new departments
+POST {{localhost}}/departments/many
+Content-Type: application/json
+
+[
+    {
+        "name": "IT Department"
+    },
+    {
+        "name": "HR Department"
+    },
+    {
+        "name": "Finance Department"
+    },
+    {
+        "name": "Marketing Department"
+    },
+    {
+        "name": "Operations Department"
+    }
+]
+
+### Update department
+PATCH {{localhost}}/departments/1
+Content-Type: application/json
+
+{
+    "name": "HR Department"
+}
+
+### Delete department
+DELETE {{localhost}}/departments/1
+
+### Search department
+GET {{localhost}}/departments?name=IT
+### Projects Endpoints ###
+
+### GET all projects
+GET {{localhost}}/projects
+
+### GET project by id
+GET {{localhost}}/projects/1
+
+### Create new project
+
+POST {{localhost}}/projects
+Content-Type: application/json
+
+{
+    "name": "Dummy project"
+}
+### Create many new projects
+POST {{localhost}}/projects/many
+Content-Type: application/json
+
+[
+    {       
+        "name": "E-commerce Platform"
+    },
+    {     
+        "name": "Mobile Banking App"
+    },
+    {       
+        "name": "Healthcare Management System"
+    },
+    {      
+        "name": "Inventory Management"
+    },
+    {      
+        "name": "Social Media Analytics"
+    }
+]
+
+### Update project
+PATCH {{localhost}}/projects/1
+Content-Type: application/json
+
+{
+    "name": "projectService"
+}
+
+### Delete project
+DELETE {{localhost}}/projects/1
+
+### find a project
+GET {{localhost}}/projects/122
+
+
+### Employee Endpoints ###
 
 ### GET /employees
 GET {{localhost}}/employees
 
 ### GET /employees/:id
-GET {{localhost}}/employees/3
+GET {{localhost}}/employees/1
 
 ### GET /employees/search?name=IT
 GET {{localhost}}/employees?name=john
@@ -15,23 +126,53 @@ POST {{localhost}}/employees
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "age": 30,
-    "department": "IT"
+    "name": "Jane Doe",
+    "email": "jane@Gmail.com",
+    "departmentId": 3,
+    "projectIds": [2, 2,3]
 }
 
-### PUT /employees/:id
-PUT {{localhost}}/employees/1
+### PATCH /employees/:id
+PATCH {{localhost}}/employees/3
 Content-Type: application/json
 
-{
+{   
     "name": "John Doe",
-    "age": 30,
-    "department": "IT"
+    "email": "john@Gmail.com",
+    "departmentId": 2,
+    "projectIds": [6,4,2,3]
 }
 
 ### DELETE /employees/:id
 DELETE {{localhost}}/employees/1
 
-### GET /employees/exception
-http://localhost:3000/employees/error
+
+
+### EmployeeProjects Endpoints ###
+
+### Create employee-project assignment
+POST {{localhost}}/employeeprojects
+Content-Type: application/json
+
+{
+    "employeeId": 3,
+    "projectId": 2
+}
+
+### Get all employee-project assignments
+GET {{localhost}}/employeeprojects
+
+### Get specific employee-project assignment
+GET {{localhost}}/employeeprojects/one?employeeId=7&projectId=2
+
+### Update employee-project assignment
+PATCH {{localhost}}/employeeprojects
+Content-Type: application/json
+
+{
+    "employeeId": 1,
+    "projectId": 2
+}
+
+### Delete employee-project assignment
+DELETE {{localhost}}/employeeprojects?employeeId=1&projectId=1

@@ -1,25 +1,119 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeprojectDto, UpdateEmployeeprojectDto } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EmployeeprojectsService {
-  create(createEmployeeprojectDto: CreateEmployeeprojectDto) {
-    return 'This action adds a new employeeproject';
+  constructor(private prisma: PrismaService) {}
+
+  private async validateProjectId(projectId: number): Promise<boolean> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Project with id ${projectId} not found`);
+    } else {
+      return true;
+    }
   }
 
-  findAll() {
-    return `This action returns all employeeprojects`;
+  private async validateEmployeeId(employeeId: number): Promise<boolean> {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: employeeId },
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Employee with id ${employeeId} not found`);
+    } else {
+      return true;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employeeproject`;
+  async create(createEmployeeprojectDto: CreateEmployeeprojectDto) {
+    const { employeeId, projectId } = createEmployeeprojectDto;
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
+    return this.prisma.employeeProjects.create({
+      data: {
+        employeeId,
+        projectId,
+      },
+      include: {
+        employee: true,
+        project: true,
+      },
+    });
   }
 
-  update(id: number, updateEmployeeprojectDto: UpdateEmployeeprojectDto) {
-    return `This action updates a #${id} employeeproject`;
+  async findAll() {
+    return this.prisma.employeeProjects.findMany({
+      include: {
+        employee: true,
+        project: true,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employeeproject`;
+  async findOne(employeeId: number, projectId: number) {
+    const assignment = await this.prisma.employeeProjects.findUnique({
+      where: {
+        employeeId_projectId: {
+          employeeId,
+          projectId,
+        },
+      },
+      include: {
+        employee: true,
+        project: true,
+      },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException('Employee project assignment not found');
+    }
+
+    return assignment;
+  }
+
+  async update(updateEmployeeprojectDto: UpdateEmployeeprojectDto) {
+    const { employeeId, projectId } = updateEmployeeprojectDto;
+
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
+
+    const assignment = await this.prisma.employeeProjects.update({
+      where: {
+        employeeId_projectId: {
+          employeeId,
+          projectId,
+        },
+      },
+      data: updateEmployeeprojectDto,
+      include: {
+        employee: true,
+        project: true,
+      },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException('Employee project assignment not found');
+    }
+
+    return assignment;
+  }
+
+  async remove(employeeId: number, projectId: number) {
+    await this.validateEmployeeId(employeeId);
+    await this.validateProjectId(projectId);
+
+    return this.prisma.employeeProjects.delete({
+      where: {
+        employeeId_projectId: {
+          employeeId,
+          projectId,
+        },
+      },
+    });
   }
 }

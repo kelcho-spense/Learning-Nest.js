@@ -1,19 +1,16 @@
 import { IsString, IsEmail, IsOptional, IsInt, IsArray } from 'class-validator';
 export class CreateEmployeeDto {
+  @IsString()
+  name: string;
 
-    @IsString()
-    name: string;
+  @IsEmail()
+  email: string;
 
-    @IsEmail()
-    email: string;
+  @IsOptional()
+  @IsInt()
+  departmentId?: number;
 
-    @IsOptional()
-    @IsInt()
-    departmentId?: number;
-
-    @IsOptional()
-    @IsArray()
-    @IsInt({ each: true })
-    projectIds?: number[];
+  @IsOptional()
+  @IsArray()
+  projectIds?: number[];
 }
-
