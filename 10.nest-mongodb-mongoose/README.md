@@ -69,7 +69,6 @@ $ docker run -it --rm --network some-network mongo \
 some-db
 ```
 
-
 Both variables are required for a user to be created. If both are present then MongoDB will start with authentication enabled (`mongod --auth`).
 
 Authentication in MongoDB is fairly complex, so more complex user setup is explicitly left to the user via `/docker-entrypoint-initdb.d/` (see the *Initializing a fresh instance* and *Authentication* sections below for more details).
@@ -77,3 +76,98 @@ Authentication in MongoDB is fairly complex, so more complex user setup is expli
 ##### `MONGO_INITDB_DATABASE`
 
 This variable allows you to specify the name of a database to be used for creation scripts in `/docker-entrypoint-initdb.d/*.js` (see *Initializing a fresh instance* below). MongoDB is fundamentally designed for "create on first use", so if you do not insert data with your JavaScript files, then no database is created.
+
+
+
+
+
+
+# BLOG APPLICATION STRUCTURE
+
+In a blogging API, the `Post` resource is central, as it represents individual blog entries. However, a comprehensive blogging platform typically requires additional resources to manage various aspects of the system. Here are some key resources you might consider implementing:
+
+**1. Users:**
+
+* **Purpose:** Manage user accounts, including authors and readers.
+* **Operations:**
+  * **Create:** Register new users.
+  * **Read:** Retrieve user profiles.
+  * **Update:** Modify user information.
+  * **Delete:** Remove user accounts.
+* **Implementation:**
+  * **Schema:** Define user attributes such as username, email, password (hashed), and role (e.g., author, reader).
+  * **Authentication:** Implement JWT (JSON Web Token) for secure user authentication.
+  * **Authorization:** Ensure that users can only perform actions permitted by their roles.
+
+**2. Categories:**
+
+* **Purpose:** Organize posts into thematic groups.
+* **Operations:**
+  * **Create:** Add new categories.
+  * **Read:** List all categories.
+  * **Update:** Edit category details.
+  * **Delete:** Remove categories.
+* **Implementation:**
+  * **Schema:** Include fields like name and description.
+  * **Association:** Link posts to categories to facilitate filtering and organization.
+
+**3. Comments:**
+
+* **Purpose:** Enable readers to engage with posts through comments.
+* **Operations:**
+  * **Create:** Post new comments.
+  * **Read:** Retrieve comments for a specific post.
+  * **Update:** Edit existing comments.
+  * **Delete:** Remove comments.
+* **Implementation:**
+  * **Schema:** Include fields for content, author (referencing the User), and timestamps.
+  * **Nested Comments:** Support threaded discussions by allowing comments to reference parent comments.
+
+**4. Tags:**
+
+* **Purpose:** Assign keywords to posts for better searchability.
+* **Operations:**
+  * **Create:** Add new tags.
+  * **Read:** List all tags.
+  * **Update:** Modify tag details.
+  * **Delete:** Remove tags.
+* **Implementation:**
+  * **Schema:** Define tag name and description.
+  * **Association:** Many-to-many relationship between posts and tags to allow multiple tags per post and vice versa.
+
+**5. Media:**
+
+* **Purpose:** Manage images, videos, and other media associated with posts.
+* **Operations:**
+  * **Upload:** Add new media files.
+  * **Read:** Retrieve media details.
+  * **Update:** Modify media information.
+  * **Delete:** Remove media files.
+* **Implementation:**
+  * **Schema:** Include fields for file type, size, URL, and associated post.
+  * **Storage:** Decide between local storage or cloud services (e.g., AWS S3) for media files.
+
+**6. Likes and Dislikes:**
+
+* **Purpose:** Allow users to express approval or disapproval of posts and comments.
+* **Operations:**
+  * **Create:** Add a like or dislike.
+  * **Read:** Retrieve counts of likes and dislikes.
+  * **Delete:** Remove a like or dislike.
+* **Implementation:**
+  * **Schema:** Track user ID, post/comment ID, and type (like or dislike).
+  * **Validation:** Ensure users can only like or dislike once per post or comment.
+
+**7. Notifications:**
+
+* **Purpose:** Inform users about activities related to their posts or comments.
+* **Operations:**
+  * **Create:** Generate new notifications.
+  * **Read:** Retrieve user notifications.
+  * **Update:** Mark notifications as read.
+  * **Delete:** Remove notifications.
+* **Implementation:**
+  * **Schema:** Include fields for type, message, associated user, and read status.
+  * **Triggers:** Automatically create notifications for events like new comments on a user's post.
+
+By incorporating these resources, you can build a robust and feature-rich blogging API that supports a wide range of functionalities, enhancing both user experience and system scalability.
