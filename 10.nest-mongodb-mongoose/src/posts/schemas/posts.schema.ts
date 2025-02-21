@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { User } from 'src/users/schemas/users.schema';
 import { Media } from 'src/media/schemas/media.schema';
+import { Category } from 'src/categories/schemas/categories.schema';
 
 export type PostDocument = HydratedDocument<Post>;
 
@@ -21,6 +22,9 @@ export class Post {
 
   @Prop([{ type: Types.ObjectId, ref: 'Media' }])
   media: Media[];
+
+  @Prop([{ type: Types.ObjectId, ref: 'Category' }])
+  category: Category[];
 
   @Prop({ required: true })
   tags: string[];
