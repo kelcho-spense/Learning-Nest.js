@@ -9,10 +9,10 @@ export class Category {
   @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop({ required: false })
+  @Prop()
   description: string;
-
-  @Prop({ required: false })
+  // will be auto-generated
+  @Prop({ unique: true, required: false })
   slug: string;
 
   @Prop([{ type: Types.ObjectId, ref: 'Post' }])
@@ -26,3 +26,14 @@ export class Category {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
+
+// Add pre-save middleware to generate slug
+CategorySchema.pre('save', function (next) {
+  if (this.name) {
+    this.slug = this.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+  next();
+});

@@ -7,8 +7,8 @@ POST {{localhost}}/users
 Content-Type: application/json
 
 {
-    "username": "johndoe2",
-    "email": "john@example.com",
+    "username": "johndoe3",
+    "email": "john3@example.com",
     "password": "strongPassword123",
     "role": "user",
     "avatar": "https://example.com/avatars/johndoe.jpg",
@@ -16,9 +16,9 @@ Content-Type: application/json
 }
 
 ### Get all users
-GET {{localhost}}/users
+GET {{localhost}}/users?limit=1&skip=0
 
-### Get user by UUID
+### Get user by id
 GET {{localhost}}/users/67b8ab0d460d4b50f695ca12
 
 ### Update user

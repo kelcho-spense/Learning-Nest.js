@@ -4,25 +4,22 @@ import { User } from 'src/users/schemas/users.schema';
 
 export type NotificationDocument = HydratedDocument<Notification>;
 
-@Schema({ timestamps: true })
+@Schema()
 export class Notification {
-  @Prop({ required: true })
-  type: string;
-
   @Prop({ required: true })
   message: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  recipient: User;
+
   @Prop({ default: false })
-  read: boolean;
+  isRead: boolean;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  user: User;
+  @Prop({ required: true })
+  type: string;
 
-  @Prop()
-  relatedEntityId: string;
-
-  @Prop()
-  relatedEntityType: string;
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

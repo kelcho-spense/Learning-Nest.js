@@ -14,12 +14,17 @@ export class UsersService {
     return await createdUser.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userModel.find().exec();
+  async findAll(limit: number = 10, skip: number = 0): Promise<User[]> {
+    const query = this.userModel.find({});
+    return await query.limit(Math.max(1, limit)).skip(Math.max(0, skip)).exec();
   }
 
   async findOne(id: string): Promise<User | NotFoundException> {
-    const user = await this.userModel.findById(id).exec();
+    const user = await this.userModel
+      .findById(id)
+      .populate('posts')
+      .populate('category')
+      .exec();
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -28,12 +33,13 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
     await this.findOne(id);
-    return await this.userModel.findByIdAndUpdate(id, updateUserDto).exec();
+    return await this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .exec();
   }
 
   async remove(id: string) {
     await this.findOne(id);
-    const res = await this.userModel.findByIdAndDelete(id).exec();
-    return res;
+    return await this.userModel.findByIdAndDelete(id).exec();
   }
 }
