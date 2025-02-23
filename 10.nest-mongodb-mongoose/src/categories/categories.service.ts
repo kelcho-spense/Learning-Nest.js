@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './schemas/categories.schema';
@@ -9,7 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 export class CategoriesService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
-  ) {}
+  ) { }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const category = new this.categoryModel(createCategoryDto);

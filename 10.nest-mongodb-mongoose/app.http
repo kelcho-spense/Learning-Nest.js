@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### Get all users
-GET {{localhost}}/users?limit=1&skip=0
+GET {{localhost}}/users?limit=10&skip=0
 
 ### Get user by id
 GET {{localhost}}/users/67b8ab0d460d4b50f695ca12
@@ -35,3 +35,129 @@ Content-Type: application/json
 
 ### Delete user
 DELETE {{localhost}}/users/67b8ab0d460d4b50f695ca12
+
+
+
+
+### Comments Endpoints ###
+
+### Create comment
+POST {{localhost}}/comments
+Content-Type: application/json
+
+{
+      "content": "This is such a detailed and insightful post, thanks for sharing.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5248c2d8162a5afad10c"
+    }
+
+### Get all comments
+GET {{localhost}}/comments?limit=10&skip=0
+
+### Get comment by id
+GET {{localhost}}/comments/657b8ab0d460d4b50f695ca1
+
+### Update comment
+PATCH {{localhost}}/comments/657b8ab0d460d4b50f695ca1
+Content-Type: application/json
+
+{
+  "content": "Updated comment content"
+}
+
+### Delete comment
+DELETE {{localhost}}/comments/657b8ab0d460d4b50f695ca1
+
+
+
+
+### Categories Endpoints ###
+
+### Create category
+POST {{localhost}}/categories
+Content-Type: application/json
+
+ {
+      "name": "Parenting Tips",
+      "description": "Helpful advice, resources, and parenting strategies."
+    }
+
+### Get all categories
+GET {{localhost}}/categories?limit=10&skip=0
+
+### Get category by id
+GET {{localhost}}/categories/657b8ab0d460d4b50f695ca3
+
+### Update category
+PATCH {{localhost}}/categories/657b8ab0d460d4b50f695ca3
+Content-Type: application/json
+
+{
+  "name": "Updated Technology",
+  "description": "Updated tech description"
+}
+
+### Delete category
+DELETE {{localhost}}/categories/67bb48368544eaad65744fbb
+
+### Posts Endpoints ###
+
+### Create post
+POST {{localhost}}/posts
+Content-Type: application/json
+
+{
+      "title": "Sustainable Living Practices",
+      "content": "A post about how you can live more sustainably and reduce your carbon footprint.",
+      "author": "67b9fa255da5a002a039606f",
+      "category": ["67bb4fb0c2d8162a5afad0f3"],
+      "tags": ["sustainability", "eco-friendly"],
+      "image_url": "https://example.com/sustainable-living.jpg"
+    }
+
+### Get all posts
+GET {{localhost}}/posts?limit=10&skip=0
+
+### Get post by id
+GET {{localhost}}/posts/67bb51f6c2d8162a5afad0fe
+
+### Update post
+PATCH {{localhost}}/posts/657b8ab0d460d4b50f695ca2
+Content-Type: application/json
+
+{
+  "title": "Updated Post Title",
+  "content": "This is the updated content."
+}
+
+### Delete post
+DELETE {{localhost}}/posts/67bb5138c2d8162a5afad0f6
+
+### Notifications Endpoints ###
+
+### Create notification
+POST {{localhost}}/notifications
+Content-Type: application/json
+
+{
+  "message": "You have a new follower!",
+  "recipient": "657b8ab0d460d4b50f695ca1",
+  "type": "follow"
+}
+
+### Get all notifications
+GET {{localhost}}/notifications?limit=10&skip=0
+
+### Get notification by id
+GET {{localhost}}/notifications/657b8ab0d460d4b50f695ca4
+
+### Update notification
+PATCH {{localhost}}/notifications/657b8ab0d460d4b50f695ca4
+Content-Type: application/json
+
+{
+  "isRead": true
+}
+
+### Delete notification
+DELETE {{localhost}}/notifications/657b8ab0d460d4b50f695ca4

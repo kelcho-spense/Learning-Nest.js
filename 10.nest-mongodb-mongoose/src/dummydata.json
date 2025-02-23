@@ -1,0 +1,330 @@
+
+// blog categories
+
+  [
+    {
+      "name": "Urban Living",
+      "description": "Tips and ideas for living in the city, from culture to lifestyle."
+    },
+    {
+      "name": "Wanderlust Adventures",
+      "description": "Explore new places, cultures, and experiences around the world."
+    },
+    {
+      "name": "Tasty Delights",
+      "description": "Delicious recipes, food trends, and culinary experiences."
+    },
+    {
+      "name": "Active Life",
+      "description": "Fitness routines, workout tips, and healthy lifestyle advice."
+    },
+    {
+      "name": "Smart Investing",
+      "description": "Personal finance tips, investing strategies, and wealth-building advice."
+    },
+    {
+      "name": "Pop Culture",
+      "description": "Entertainment, music, movies, and the latest trends in popular culture."
+    },
+    {
+      "name": "Tech Trends",
+      "description": "Latest news, gadgets, and breakthroughs in technology."
+    },
+    {
+      "name": "Parenting Tips",
+      "description": "Helpful advice, resources, and parenting strategies."
+    },
+    {
+      "name": "Startup Guide",
+      "description": "Entrepreneurship advice, startup strategies, and business success stories."
+    },
+    {
+      "name": "Green Living",
+      "description": "Eco-friendly practices, sustainability, and environmental awareness."
+    }
+  ]
+  
+  // posts 
+
+  [
+    {
+      "title": "The Future of Technology",
+      "content": "In this post, we explore how technology is shaping the future of our lives.",
+      "author": "67b8b74efb57906b820f6e71",
+      "category": ["67bb4f4bc2d8162a5afad0e5"],
+      "tags": ["tech", "future"],
+      "image_url": "https://example.com/tech-future.jpg"
+    },
+    {
+      "title": "Exploring the World",
+      "content": "A guide to traveling across the world and discovering new places.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "category": ["67bb4f5dc2d8162a5afad0e7"],
+      "tags": ["travel", "adventure"],
+      "image_url": "https://example.com/travel-world.jpg"
+    },
+    {
+      "title": "Healthy Eating Habits",
+      "content": "This post talks about maintaining a healthy diet and making better food choices.",
+      "author": "67b9fa255da5a002a039606f",
+      "category": ["67bb4f69c2d8162a5afad0e9"],
+      "tags": ["health", "food"],
+      "image_url": "https://example.com/healthy-eating.jpg"
+    },
+    {
+      "title": "The Importance of Fitness",
+      "content": "Understanding the benefits of staying fit and exercising regularly.",
+      "author": "67b8b74efb57906b820f6e71",
+      "category": ["67bb4f7dc2d8162a5afad0eb"],
+      "tags": ["fitness", "health"],
+      "image_url": "https://example.com/fitness.jpg"
+    },
+    {
+      "title": "Managing Your Personal Finance",
+      "content": "This post covers tips for managing your money and budgeting effectively.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "category": ["67bb4f88c2d8162a5afad0ed"],
+      "tags": ["finance", "budgeting"],
+      "image_url": "https://example.com/finance.jpg"
+    },
+    {
+      "title": "Top Movie Releases of the Year",
+      "content": "A roundup of the top movies hitting theaters this year.",
+      "author": "67b9fa255da5a002a039606f",
+      "category": ["67bb4f99c2d8162a5afad0ef"],
+      "tags": ["entertainment", "movies"],
+      "image_url": "https://example.com/movies.jpg"
+    },
+    {
+      "title": "Tech Innovations to Watch",
+      "content": "New and upcoming technological innovations that could change the world.",
+      "author": "67b8b74efb57906b820f6e71",
+      "category": ["67bb4f4bc2d8162a5afad0e5"],
+      "tags": ["technology", "innovation"],
+      "image_url": "https://example.com/tech-innovation.jpg"
+    },
+    {
+      "title": "Tips for First-Time Parents",
+      "content": "A collection of useful tips and advice for parents expecting their first child.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "category": ["67bb4fa6c2d8162a5afad0f1"],
+      "tags": ["parenting", "newborn"],
+      "image_url": "https://example.com/first-time-parents.jpg"
+    },
+    {
+      "title": "Sustainable Living Practices",
+      "content": "A post about how you can live more sustainably and reduce your carbon footprint.",
+      "author": "67b9fa255da5a002a039606f",
+      "category": ["67bb4fb0c2d8162a5afad0f3"],
+      "tags": ["sustainability", "eco-friendly"],
+      "image_url": "https://example.com/sustainable-living.jpg"
+    },
+    {
+      "title": "Building a Successful Startup",
+      "content": "Advice and tips for launching and growing a successful business from scratch.",
+      "author": "67b8b74efb57906b820f6e71",
+      "category": ["67bb4f99c2d8162a5afad0ef"],
+      "tags": ["business", "startup"],
+      "image_url": "https://example.com/startup-guide.jpg"
+    },
+    {
+      "title": "Ultimate Guide to Travel Photography",
+      "content": "How to capture stunning photos while traveling to new places.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "category": ["67bb4f5dc2d8162a5afad0e7"],
+      "tags": ["photography", "travel"],
+      "image_url": "https://example.com/travel-photography.jpg"
+    },
+    {
+      "title": "The Rise of Plant-Based Diets",
+      "content": "Exploring the growing popularity of plant-based eating and its benefits.",
+      "author": "67b9fa255da5a002a039606f",
+      "category": ["67bb4f69c2d8162a5afad0e9"],
+      "tags": ["plant-based", "diet"],
+      "image_url": "https://example.com/plant-based.jpg"
+    },
+    {
+      "title": "Home Workouts for Busy People",
+      "content": "Quick and effective workout routines you can do at home.",
+      "author": "67b8b74efb57906b820f6e71",
+      "category": ["67bb4f7dc2d8162a5afad0eb"],
+      "tags": ["fitness", "home workouts"],
+      "image_url": "https://example.com/home-workouts.jpg"
+    },
+    {
+      "title": "Investing in the Stock Market",
+      "content": "A beginner's guide to understanding the stock market and making smart investments.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "category": ["67bb4f88c2d8162a5afad0ed"],
+      "tags": ["investing", "stocks"],
+      "image_url": "https://example.com/investing.jpg"
+    }
+  ]
+
+  // comments 
+
+  [
+    {
+      "content": "This is a great post!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb51f6c2d8162a5afad0fe"
+    },
+    {
+      "content": "Really insightful, thanks for sharing!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb51f6c2d8162a5afad0fe"
+    },
+    {
+      "content": "I love how you explained the topic, very clear.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb51f6c2d8162a5afad0fe"
+    },
+    {
+      "content": "Great tips, I will definitely try some of these!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb51f6c2d8162a5afad0fe"
+    },
+    {
+      "content": "Very helpful post, I needed this info!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5203c2d8162a5afad100"
+    },
+    {
+      "content": "Such an interesting perspective, great read!",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5203c2d8162a5afad100"
+    },
+    {
+      "content": "I agree with you, this is definitely something to consider.",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5203c2d8162a5afad100"
+    },
+    {
+      "content": "Thanks for sharing, this will help a lot of people!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5203c2d8162a5afad100"
+    },
+    {
+      "content": "Amazing guide, I'll be bookmarking this!",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb520dc2d8162a5afad102"
+    },
+    {
+      "content": "This is exactly what I needed, thank you!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb520dc2d8162a5afad102"
+    },
+    {
+      "content": "Great post, very informative and easy to understand.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb520dc2d8162a5afad102"
+    },
+    {
+      "content": "I’m definitely going to try this approach!",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb520dc2d8162a5afad102"
+    },
+    {
+      "content": "Wonderful ideas, I’ll be implementing these soon!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5219c2d8162a5afad104"
+    },
+    {
+      "content": "So helpful, thanks for breaking it down for us!",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5219c2d8162a5afad104"
+    },
+    {
+      "content": "I didn’t know this before, I’ll definitely try it.",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5219c2d8162a5afad104"
+    },
+    {
+      "content": "Excellent advice, I’ve learned a lot from this post.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5219c2d8162a5afad104"
+    },
+    {
+      "content": "This post is a game-changer for me, thanks for sharing!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5224c2d8162a5afad106"
+    },
+    {
+      "content": "Really appreciate the tips in this post, very useful.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5224c2d8162a5afad106"
+    },
+    {
+      "content": "This is a fantastic post, I’ll definitely recommend it to others.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5224c2d8162a5afad106"
+    },
+    {
+      "content": "Such practical advice, I can’t wait to apply it.",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5224c2d8162a5afad106"
+    },
+    {
+      "content": "This has been so eye-opening, thank you for the insights.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5230c2d8162a5afad108"
+    },
+    {
+      "content": "I really needed this post today, thanks a lot!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5230c2d8162a5afad108"
+    },
+    {
+      "content": "This is a great post, I’m looking forward to trying these tips.",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5230c2d8162a5afad108"
+    },
+    {
+      "content": "Thank you for writing this, I’ve learned a lot.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5230c2d8162a5afad108"
+    },
+    {
+      "content": "I’m going to share this post with my friends, it’s that good!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb523bc2d8162a5afad10a"
+    },
+    {
+      "content": "Amazing post! I’ll be referring to this regularly.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb523bc2d8162a5afad10a"
+    },
+    {
+      "content": "This is one of the best posts I’ve read, very helpful!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb523bc2d8162a5afad10a"
+    },
+    {
+      "content": "Thanks for such an informative and detailed post!",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb523bc2d8162a5afad10a"
+    },
+    {
+      "content": "I will be trying this out soon, thanks for sharing!",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5248c2d8162a5afad10c"
+    },
+    {
+      "content": "This post is exactly what I needed, thanks!",
+      "author": "67b8b74efb57906b820f6e71",
+      "post": "67bb5248c2d8162a5afad10c"
+    },
+    {
+      "content": "Great ideas in this post, I’ll be incorporating them.",
+      "author": "67b9fa1c5da5a002a039606d",
+      "post": "67bb5248c2d8162a5afad10c"
+    },
+    {
+      "content": "This is such a detailed and insightful post, thanks for sharing.",
+      "author": "67b9fa255da5a002a039606f",
+      "post": "67bb5248c2d8162a5afad10c"
+    }
+  ]
+  
+
+  

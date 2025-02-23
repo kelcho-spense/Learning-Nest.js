@@ -7,7 +7,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PostsModule } from './posts/posts.module';
 import { LoggerModule } from './logger/logger.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +27,5 @@ import { LoggerModule } from './logger/logger.module';
     LoggerModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}

@@ -19,11 +19,11 @@ export class Post {
   @Prop([{ type: Types.ObjectId, ref: 'Comment' }])
   comments: Comment[];
 
-  @Prop({ required: false })
-  image_url: string[];
-
   @Prop([{ type: Types.ObjectId, ref: 'Category' }])
   category: Category[];
+
+  @Prop({ required: false })
+  image_url: string[];
 
   @Prop({ required: true })
   tags: string[];
