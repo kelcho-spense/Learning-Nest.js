@@ -19,7 +19,7 @@ export class PostsService {
       .find({})
       .populate('author')
       .populate('category')
-      .populate('comments');
+      .populate('comments'); // Populate the comments
     return await query.limit(Math.max(1, limit)).skip(Math.max(0, skip)).exec();
   }
 
@@ -28,7 +28,7 @@ export class PostsService {
       .findById(id)
       .populate('author')
       .populate('category')
-      .populate('comments')
+      .populate('comments') // Populate the comments
       .exec();
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -37,11 +37,33 @@ export class PostsService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto): Promise<Post | null> {
-    await this.findOne(id);
+    const { category, comments, ...rest } = updatePostDto;
+    const update: any = { ...rest };
+
+    if (category || comments) {
+      update.$addToSet = {};
+      if (category) {
+        update.$addToSet.category = { $each: category };
+      }
+      if (comments) {
+        update.$addToSet.comments = { $each: comments };
+      }
+    }
+
     return await this.postModel
-      .findByIdAndUpdate(id, updatePostDto, { new: true })
+      .findByIdAndUpdate(id, update, { new: true })
+      .populate('author')
+      .populate('category')
+      .populate('comments')
       .exec();
   }
+
+  // async update(id: string, updatePostDto: UpdatePostDto): Promise<Post | null> {
+  //   await this.findOne(id);
+  //   return await this.postModel
+  //     .findByIdAndUpdate(id, updatePostDto, { new: true })
+  //     .exec();
+  // }
 
   async remove(id: string) {
     await this.findOne(id);

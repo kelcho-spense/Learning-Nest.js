@@ -121,13 +121,12 @@ GET {{localhost}}/posts?limit=10&skip=0
 ### Get post by id
 GET {{localhost}}/posts/67bb51f6c2d8162a5afad0fe
 
-### Update post
-PATCH {{localhost}}/posts/657b8ab0d460d4b50f695ca2
+### Update post 
+PATCH {{localhost}}/posts/67bb51f6c2d8162a5afad0fe
 Content-Type: application/json
 
 {
-  "title": "Updated Post Title",
-  "content": "This is the updated content."
+  "category": ["67bb4fa6c2d8162a5afad0f1", "67bb4f88c2d8162a5afad0ed"]
 }
 
 ### Delete post

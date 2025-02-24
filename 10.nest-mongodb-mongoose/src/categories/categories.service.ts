@@ -13,7 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 export class CategoriesService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
-  ) { }
+  ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const category = new this.categoryModel(createCategoryDto);
