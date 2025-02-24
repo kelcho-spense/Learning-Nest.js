@@ -37,7 +37,34 @@ Content-Type: application/json
 DELETE {{localhost}}/users/67b8ab0d460d4b50f695ca12
 
 
+### Categories Endpoints ###
 
+### Create category
+POST {{localhost}}/categories
+Content-Type: application/json
+
+ {
+      "name": "Parenting Tips",
+      "description": "Helpful advice, resources, and parenting strategies."
+    }
+
+### Get all categories
+GET {{localhost}}/categories?limit=10&skip=0
+
+### Get category by id
+GET {{localhost}}/categories/657b8ab0d460d4b50f695ca3
+
+### Update category
+PATCH {{localhost}}/categories/657b8ab0d460d4b50f695ca3
+Content-Type: application/json
+
+{
+  "name": "Updated Technology",
+  "description": "Updated tech description"
+}
+
+### Delete category
+DELETE {{localhost}}/categories/67bb4f5dc2d8162a5afad0e7
 
 ### Comments Endpoints ###
 
@@ -66,39 +93,7 @@ Content-Type: application/json
 }
 
 ### Delete comment
-DELETE {{localhost}}/comments/657b8ab0d460d4b50f695ca1
-
-
-
-
-### Categories Endpoints ###
-
-### Create category
-POST {{localhost}}/categories
-Content-Type: application/json
-
- {
-      "name": "Parenting Tips",
-      "description": "Helpful advice, resources, and parenting strategies."
-    }
-
-### Get all categories
-GET {{localhost}}/categories?limit=10&skip=0
-
-### Get category by id
-GET {{localhost}}/categories/657b8ab0d460d4b50f695ca3
-
-### Update category
-PATCH {{localhost}}/categories/657b8ab0d460d4b50f695ca3
-Content-Type: application/json
-
-{
-  "name": "Updated Technology",
-  "description": "Updated tech description"
-}
-
-### Delete category
-DELETE {{localhost}}/categories/67bb48368544eaad65744fbb
+DELETE {{localhost}}/comments/67bb5427c2d8162a5afad118
 
 ### Posts Endpoints ###
 
@@ -107,13 +102,13 @@ POST {{localhost}}/posts
 Content-Type: application/json
 
 {
-      "title": "Sustainable Living Practices",
-      "content": "A post about how you can live more sustainably and reduce your carbon footprint.",
-      "author": "67b9fa255da5a002a039606f",
-      "category": ["67bb4fb0c2d8162a5afad0f3"],
-      "tags": ["sustainability", "eco-friendly"],
-      "image_url": "https://example.com/sustainable-living.jpg"
-    }
+    "title": "Sustainable Living Practices",
+    "content": "A post about how you can live more sustainably and reduce your carbon footprint.",
+    "author": "67b9fa255da5a002a039606f",
+    "category": ["67bb4fb0c2d8162a5afad0f3"],
+    "tags": ["sustainability", "eco-friendly"],
+    "image_url": "https://example.com/sustainable-living.jpg"
+}
 
 ### Get all posts
 GET {{localhost}}/posts?limit=10&skip=0
@@ -126,7 +121,7 @@ PATCH {{localhost}}/posts/67bb51f6c2d8162a5afad0fe
 Content-Type: application/json
 
 {
-  "category": ["67bb4fa6c2d8162a5afad0f1", "67bb4f88c2d8162a5afad0ed"]
+  "comments": ["77bb543ec2d8162a5afad11a"]
 }
 
 ### Delete post

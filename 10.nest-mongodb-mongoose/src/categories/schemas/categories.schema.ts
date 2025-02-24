@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Post } from 'src/posts/schemas/posts.schema';
 
 export type CategoryDocument = HydratedDocument<Category>;
 
@@ -16,7 +15,7 @@ export class Category {
   slug: string;
 
   @Prop([{ type: Types.ObjectId, ref: 'Post' }])
-  posts: Post[];
+  posts: Types.ObjectId[];
 
   @Prop({ default: Date.now })
   createdAt: Date;

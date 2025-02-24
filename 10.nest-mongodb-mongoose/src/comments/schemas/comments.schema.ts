@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { User } from 'src/users/schemas/users.schema';
-import { Post } from 'src/posts/schemas/posts.schema';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
@@ -11,10 +9,10 @@ export class Comment {
   content: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  author: User;
+  author: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Post', required: true })
-  post: Post;
+  post: Types.ObjectId;
 
   @Prop({ default: 0, required: false })
   likes: number;

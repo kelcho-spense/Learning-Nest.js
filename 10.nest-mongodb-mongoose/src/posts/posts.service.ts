@@ -4,10 +4,16 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './schemas/posts.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Category } from 'src/categories/schemas/categories.schema';
+import { Comment } from 'src/comments/schemas/comments.schema';
 
 @Injectable()
 export class PostsService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<Post>,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
+    @InjectModel(Comment.name) private commentModel: Model<Comment>,
+  ) {}
 
   async create(createPostDto: CreatePostDto): Promise<Post> {
     const createdPost = new this.postModel(createPostDto);
@@ -37,16 +43,53 @@ export class PostsService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto): Promise<Post | null> {
+    await this.findOne(id);
     const { category, comments, ...rest } = updatePostDto;
-    const update: any = { ...rest };
+    const update: Partial<Post> = { ...rest } as unknown as Partial<Post>;
 
-    if (category || comments) {
-      update.$addToSet = {};
-      if (category) {
-        update.$addToSet.category = { $each: category };
+    if (category) {
+      if (Array.isArray(category)) {
+        const foundCategories = await Promise.all(
+          category.map((catId) => this.categoryModel.findById(catId)),
+        );
+        if (foundCategories.some((cat) => !cat)) {
+          const missingCategories = category.filter(
+            (catId, idx) => !foundCategories[idx],
+          );
+          throw new NotFoundException(
+            `Categories not found: ${missingCategories.join(', ')}`,
+          );
+        }
+        update.category = category;
+      } else {
+        const foundCategory = await this.categoryModel.findById(category);
+        if (!foundCategory) {
+          throw new NotFoundException('Category not found');
+        }
+        update.category = category;
       }
-      if (comments) {
-        update.$addToSet.comments = { $each: comments };
+    }
+
+    if (comments) {
+      if (Array.isArray(comments)) {
+        const foundComments = await Promise.all(
+          comments.map((commentId) => this.commentModel.findById(commentId)),
+        );
+        if (foundComments.some((comment) => !comment)) {
+          const missingComments = comments.filter(
+            (commentId, idx) => !foundComments[idx],
+          );
+          throw new NotFoundException(
+            `Comment not found with id(s): ${missingComments.join(', ')}`,
+          );
+        }
+        update.comments = comments;
+      } else {
+        const foundComment = await this.commentModel.findById(comments);
+        if (!foundComment) {
+          throw new NotFoundException('Comment not found');
+        }
+        update.comments = comments;
       }
     }
 
