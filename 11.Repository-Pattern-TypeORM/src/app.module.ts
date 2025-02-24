@@ -28,9 +28,10 @@ import { Profile } from './profiles/entities/profile.entity';
         type: 'sqlite',
         database: configService.get<string>('DATABASE') || 'db.sqlite',
         entities: [Book, Author, Category, Profile],
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        synchronize: configService.get<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       }),
     }),
+    TypeOrmModule.forFeature([Book, Author, Category, Profile]),
   ],
   controllers: [AppController],
   providers: [AppService],
