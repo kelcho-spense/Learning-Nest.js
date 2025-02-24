@@ -16,7 +16,7 @@ import { LoggerModule } from './logger/logger.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+        uri: configService.getOrThrow<string>('MONGODB_URI'),
       }),
     }),
     UsersModule,
@@ -28,4 +28,4 @@ import { LoggerModule } from './logger/logger.module';
   ],
   controllers: [],
 })
-export class AppModule {}
+export class AppModule { }

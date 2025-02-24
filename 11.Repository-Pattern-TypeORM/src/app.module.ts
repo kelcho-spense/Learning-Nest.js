@@ -26,9 +26,9 @@ import { Profile } from './profiles/entities/profile.entity';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'sqlite',
-        database: configService.get<string>('DATABASE') || 'db.sqlite',
+        database: configService.getOrThrow<string>('DATABASE') || 'db.sqlite',
         entities: [Book, Author, Category, Profile],
-        synchronize: configService.get<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
+        synchronize: configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       }),
     }),
     TypeOrmModule.forFeature([Book, Author, Category, Profile]),
@@ -36,4 +36,4 @@ import { Profile } from './profiles/entities/profile.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

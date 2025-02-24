@@ -27,7 +27,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
+        uri: configService.getOrThrow<string>('MONGODB_URI'),
       }),
     }),
   ],

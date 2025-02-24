@@ -6,6 +6,7 @@ export class Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
+    // One-to-One Relationship with Author
     @OneToOne(() => Author)
     author: Author;
 }

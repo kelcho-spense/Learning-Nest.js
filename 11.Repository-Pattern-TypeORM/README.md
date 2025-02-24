@@ -1,99 +1,253 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Here's a step-by-step implementation of a project that incorporates one-to-one, one-to-many, and many-to-many relationships using  **NestJS** ,  **TypeORM** , and  **SQLite** . I'll guide you through the creation of entities, relationships, and CRUD operations for each case.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### 1. **Create a NestJS Project**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+First, create a new NestJS project if you haven't already:
 
 ```bash
-$ pnpm install
+nest new bookstore
 ```
 
-## Compile and run the project
+After this, choose TypeScript as the language, and when prompted, choose to install the dependencies automatically.
+
+### 2. **Install TypeORM and SQLite**
+
+To set up TypeORM with SQLite, you will need to install TypeORM and SQLite3:
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+npm install @nestjs/typeorm typeorm sqlite3
 ```
 
-## Run tests
+### 3. **Set Up TypeORM in `app.module.ts`**
+
+Now, configure TypeORM to use SQLite in the `app.module.ts` file.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Author } from './author.entity';
+import { Book } from './book.entity';
+import { Profile } from './profile.entity';
+import { Category } from './category.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: [Author, Book, Profile, Category],
+      synchronize: true, // Note: In production, set this to false and use migrations
+    }),
+    TypeOrmModule.forFeature([Author, Book, Profile, Category]),
+  ],
+})
+export class AppModule {}
+```
+
+### 4. **Define Entities with Relationships**
+
+#### **Author ↔ Profile (One-to-One)**
+
+In this case, each `Author` has a unique `Profile`.
+
+```typescript
+// author.entity.ts
+import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Profile } from './profile.entity';
+
+@Entity()
+export class Author {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()  // Join column indicates the foreign key
+  profile: Profile;
+}
+```
+
+```typescript
+// profile.entity.ts
+import { Entity, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Author } from './author.entity';
+
+@Entity()
+export class Profile {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @OneToOne(() => Author)
+  author: Author;
+}
+```
+
+#### **Author ↔ Books (One-to-Many)**
+
+An `Author` can write many `Books`, and each `Book` is written by one `Author`.
+
+```typescript
+// author.entity.ts
+import { Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Book } from './book.entity';
+
+@Entity()
+export class Author {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @OneToMany(() => Book, (book) => book.author)
+  books: Book[];
+}
+```
+
+```typescript
+// book.entity.ts
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Author } from './author.entity';
+
+@Entity()
+export class Book {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Author, (author) => author.books)
+  author: Author;
+}
+```
+
+#### **Book ↔ Category (Many-to-Many)**
+
+A `Book` can belong to many `Categories`, and each `Category` can contain many `Books`.
+
+```typescript
+// book.entity.ts
+import { Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Category } from './category.entity';
+
+@Entity()
+export class Book {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToMany(() => Category, (category) => category.books)
+  @JoinTable() // This decorator will create a join table for many-to-many relationship
+  categories: Category[];
+}
+```
+
+```typescript
+// category.entity.ts
+import { Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Book } from './book.entity';
+
+@Entity()
+export class Category {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToMany(() => Book, (book) => book.categories)
+  books: Book[];
+}
+```
+
+### 5. **Set Up Controllers and Services**
+
+Now that we have our entities and relationships set up, we need controllers and services to handle the business logic and routes.
+
+#### **Author Controller and Service**
+
+Let's create a service and controller for managing authors.
+
+```typescript
+// author.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Author } from './author.entity';
+
+@Injectable()
+export class AuthorService {
+  constructor(
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>,
+  ) {}
+
+  findAll(): Promise<Author[]> {
+    return this.authorRepository.find();
+  }
+
+  findOne(id: number): Promise<Author> {
+    return this.authorRepository.findOne(id);
+  }
+
+  async create(authorData: Partial<Author>): Promise<Author> {
+    const author = this.authorRepository.create(authorData);
+    return await this.authorRepository.save(author);
+  }
+}
+```
+
+```typescript
+// author.controller.ts
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { AuthorService } from './author.service';
+import { Author } from './author.entity';
+
+@Controller('authors')
+export class AuthorController {
+  constructor(private authorService: AuthorService) {}
+
+  @Get()
+  findAll(): Promise<Author[]> {
+    return this.authorService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: number): Promise<Author> {
+    return this.authorService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() authorData: Partial<Author>): Promise<Author> {
+    return this.authorService.create(authorData);
+  }
+}
+```
+
+### 6. **Run the Application**
+
+Now, you can run your application:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+npm run start
 ```
 
-## Deployment
+You can access your API and interact with your entities (Author, Profile, Book, Category) through RESTful endpoints like:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+* `GET /authors`: Retrieve all authors
+* `GET /authors/:id`: Retrieve a specific author
+* `POST /authors`: Create a new author
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 7. **Testing CRUD Operations**
+
+You can use Postman or any API client to test these CRUD operations.
+
+* **POST** `/authors`: Create an author with a profile
+* **GET** `/authors`: Get a list of authors
+* **GET** `/authors/:id`: Get a specific author
+* **POST** `/books`: Create books associated with authors
+* **GET** `/books`: Get all books, including categories
+
+### 8. **Data Validation (Optional)**
+
+To ensure the integrity of your data, you can use class-validator with NestJS. Install it by running:
 
 ```bash
-$ pnpm install -g mau
-$ mau deploy
+npm install class-validator class-transformer
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Then, you can add validation to your DTOs (Data Transfer Objects) or entities using decorators like `@IsString()`, `@IsInt()`, etc.
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+By following this guide, you'll have successfully set up a project with one-to-one, one-to-many, and many-to-many relationships in NestJS using TypeORM and SQLite.
