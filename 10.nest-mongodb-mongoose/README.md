@@ -1,46 +1,17 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS MongoDB Mongoose Blog Tutorial
 
-<p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This document serves as a walk‑through for setting up the blog project and using the key modules: Users, Posts, and Comments.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Setup
 
-## Project setup
+### Prerequisites
 
-```bash
-$ pnpm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
+- [Node.js](https://nodejs.org/) installed
+- [pnpm](https://pnpm.io/) package manager
+- MongoDB running (locally or via Docker)
+- NestJS CLI: `npm install -g @nestjs/cli`
 
 ## Docker Mongo Commands
 
@@ -76,11 +47,6 @@ Authentication in MongoDB is fairly complex, so more complex user setup is expli
 ##### `MONGO_INITDB_DATABASE`
 
 This variable allows you to specify the name of a database to be used for creation scripts in `/docker-entrypoint-initdb.d/*.js` (see *Initializing a fresh instance* below). MongoDB is fundamentally designed for "create on first use", so if you do not insert data with your JavaScript files, then no database is created.
-
-
-
-
-
 
 # BLOG APPLICATION STRUCTURE
 
@@ -171,3 +137,207 @@ In a blogging API, the `Post` resource is central, as it represents individual b
   * **Triggers:** Automatically create notifications for events like new comments on a user's post.
 
 By incorporating these resources, you can build a robust and feature-rich blogging API that supports a wide range of functionalities, enhancing both user experience and system scalability.
+
+
+### 1. Create a New NestJS Project
+
+Generate the project and change to its directory:
+
+```bash
+nest new nest-mongodb-mongoose
+cd nest-mongodb-mongoose
+```
+
+2. Install required dependencies:
+
+```bash
+npm install @nestjs/mongoose mongoose
+```
+
+## Database Connection
+
+1. Update `app.module.ts`:
+
+```typescript
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/blog')
+  ]
+})
+```
+
+## Creating the User Module
+
+1. Generate the user module:
+
+```bash
+nest g module user
+nest g controller user
+nest g service user
+```
+
+2. Create user schema (`user/schemas/user.schema.ts`):
+
+```typescript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+@Schema()
+export class User {
+  @Prop({ required: true })
+  username: string;
+
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+```
+
+## Creating the Post Module
+
+1. Generate the post module:
+
+```bash
+nest g module post
+nest g controller post
+nest g service post
+```
+
+2. Create post schema (`post/schemas/post.schema.ts`):
+
+```typescript
+@Schema()
+export class Post {
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
+  content: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  author: User;
+}
+```
+
+## Creating the Comment Module
+
+1. Generate the comment module:
+
+```bash
+nest g module comment
+nest g controller comment
+nest g service comment
+```
+
+2. Create comment schema (`comment/schemas/comment.schema.ts`):
+
+```typescript
+@Schema()
+export class Comment {
+  @Prop({ required: true })
+  content: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  author: User;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Post' })
+  post: Post;
+}
+```
+
+## API Endpoints
+
+### User Endpoints
+
+```typescript
+// Create user
+POST /user
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "secret123"
+}
+
+// Get user
+GET /user/:id
+```
+
+### Post Endpoints
+
+```typescript
+// Create post
+POST /post
+{
+  "title": "My First Blog Post",
+  "content": "This is the content of my post",
+  "author": "userId"
+}
+
+// Get all posts
+GET /post
+
+// Get single post
+GET /post/:id
+```
+
+### Comment Endpoints
+
+```typescript
+// Create comment
+POST /comment
+{
+  "content": "Great post!",
+  "author": "userId",
+  "post": "postId"
+}
+
+// Get comments for post
+GET /comment/post/:postId
+```
+
+## Example Usage
+
+1. Create a user:
+
+```bash
+curl -X POST http://localhost:3000/user -H "Content-Type: application/json" -d '{"username":"john_doe","email":"john@example.com","password":"secret123"}'
+```
+
+2. Create a post:
+
+```bash
+curl -X POST http://localhost:3000/post -H "Content-Type: application/json" -d '{"title":"My First Post","content":"Hello World!","author":"userId"}'
+```
+
+3. Add a comment:
+
+```bash
+curl -X POST http://localhost:3000/comment -H "Content-Type: application/json" -d '{"content":"Great post!","author":"userId","post":"postId"}'
+```
+
+## Testing
+
+Run tests using:
+
+```bash
+npm run test
+```
+
+For e2e tests:
+
+```bash
+npm run test:e2e
+```
+
+## Additional Notes
+
+- Make sure MongoDB is running locally on port 27017
+- Use proper error handling in production
+- Implement authentication and authorization
+- Add input validation using DTOs
+- Consider implementing pagination for lists
