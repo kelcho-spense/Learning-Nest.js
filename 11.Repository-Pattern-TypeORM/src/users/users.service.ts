@@ -14,14 +14,14 @@ export class UsersService {
 
     findAll(): Promise<User[]> {
         return this.usersRepository.find({
-            relations: ['profile', 'posts'],
+            relations: ['profile', 'bookReviews'],
         });
     }
 
     async findOne(id: string): Promise<User> {
         const user = await this.usersRepository.findOne({
             where: { id },
-            relations: ['profile', 'posts'],
+            relations: ['profile', 'bookReviews'],
         });
 
         if (!user) {
