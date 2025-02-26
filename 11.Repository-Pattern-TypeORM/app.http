@@ -167,11 +167,11 @@ DELETE {{localhost}}/books/1
 
 ### Book Reviews Endpoints ###
 # Get all book reviews
-GET {{localhost}}/books-reviews
+GET {{localhost}}/book-reviews
 Accept: application/json
 
 ### Get book review by ID
-GET {{localhost}}/books-reviews/1
+GET {{localhost}}/book-reviews/1
 Accept: application/json
 
 ### Get reviews for a specific book
@@ -179,7 +179,7 @@ GET {{localhost}}/books/1/reviews
 Accept: application/json
 
 ### Create new book review
-POST {{localhost}}/books-reviews
+POST {{localhost}}/book-reviews
 Content-Type: application/json
 
 {
@@ -190,7 +190,7 @@ Content-Type: application/json
 }
 
 ### Update book review
-PATCH {{localhost}}/books-reviews/1
+PATCH {{localhost}}/book-reviews/1
 Content-Type: application/json
 
 {
@@ -199,5 +199,39 @@ Content-Type: application/json
 }
 
 ### Delete book review
-DELETE {{localhost}}/books-reviews/1
+DELETE {{localhost}}/book-reviews/1
+
+
+### Seed Data Endpoints ###
+# Seed all data (users, authors, books)
+GET {{localhost}}/seed/all
+Accept: application/json
+
+### Seed only users
+GET {{localhost}}/seed/users
+Accept: application/json
+
+### Seed only authors
+GET {{localhost}}/seed/authors
+Accept: application/json
+
+### Seed only books
+GET {{localhost}}/seed/books
+Accept: application/json
+
+### Seed only profiles
+GET {{localhost}}/seed/profiles
+Accept: application/json
+
+### Seed only categories
+GET {{localhost}}/seed/categories
+Accept: application/json
+
+### Seed only book reviews
+GET {{localhost}}/seed/book-reviews
+Accept: application/json
+
+### Clear all seeded data
+POST {{localhost}}/seed/clear
+Accept: application/json
 

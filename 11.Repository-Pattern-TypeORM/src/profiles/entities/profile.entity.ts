@@ -1,18 +1,24 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity('profiles')
 export class Profile {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ nullable: true, type: 'text' })
-    bio: string;
+  @Column('text', { nullable: true })
+  bio: string;
 
-    @Column({ nullable: true })
-    avatar: string;
+  @Column({ nullable: true })
+  avatar: string;
 
-    @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' })
-    user: User;
+  @Column({ nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ nullable: true })
+  location: string;
+
+  @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

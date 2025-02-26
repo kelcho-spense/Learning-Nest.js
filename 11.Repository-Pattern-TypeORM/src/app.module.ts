@@ -34,14 +34,22 @@ import { SeedModule } from './seed/seed.module';
         type: 'sqlite',
         database: configService.getOrThrow<string>('DATABASE') || 'db.sqlite',
         entities: [Book, Author, Category, Profile, User, BookReview],
-        synchronize: configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
+        synchronize:
+          configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
       }),
     }),
-    TypeOrmModule.forFeature([Book, Author, Category, Profile, User, BookReview]),
+    TypeOrmModule.forFeature([
+      Book,
+      Author,
+      Category,
+      Profile,
+      User,
+      BookReview,
+    ]),
     BookReviewsModule,
     SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

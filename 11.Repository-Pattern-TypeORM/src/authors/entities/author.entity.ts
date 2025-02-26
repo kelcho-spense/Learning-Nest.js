@@ -1,23 +1,23 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Book } from 'src/books/entities/book.entity'; 
+import { Book } from 'src/books/entities/book.entity';
 
 @Entity()
 export class Author {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({ nullable: true })
-    bio: string;
+  @Column({ nullable: true })
+  bio: string;
 
-    @Column({ nullable: true })
-    birthDate: Date;
+  @Column({ nullable: true })
+  birthDate: Date;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ default: true })
+  isActive: boolean;
 
-    @OneToMany(() => Book, (book) => book.author, { cascade: true })
-    books: Book[];
+  @OneToMany(() => Book, (book) => book.author, { cascade: true })
+  books: Book[];
 }

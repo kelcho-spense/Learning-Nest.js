@@ -18,7 +18,7 @@ export class BookReviewsService {
 
   async create(createBookReviewDto: CreateBookReviewDto): Promise<BookReview> {
     const { bookId, reviewerId, ...reviewData } = createBookReviewDto;
-    
+
     // Get the book and user entities
     const book = await this.booksService.findOne(bookId);
     const user = await this.usersService.findOne(reviewerId);
@@ -53,37 +53,40 @@ export class BookReviewsService {
     return review;
   }
 
-  async update(id: string, updateBookReviewDto: UpdateBookReviewDto): Promise<BookReview> {
+  async update(
+    id: string,
+    updateBookReviewDto: UpdateBookReviewDto,
+  ): Promise<BookReview> {
     // First check if the review exists
     await this.findOne(id);
-    
+
     const { bookId, reviewerId, ...reviewData } = updateBookReviewDto;
-    
+
     // Create an object to store updated relations
     const updateData: any = { ...reviewData };
-    
+
     // Update book relation if bookId is provided
     if (bookId) {
       const book = await this.booksService.findOne(bookId);
       updateData.book = book;
     }
-    
+
     // Update reviewer relation if reviewerId is provided
     if (reviewerId) {
       const user = await this.usersService.findOne(reviewerId);
       updateData.user = user;
     }
-    
+
     // Update the review
     await this.bookReviewRepository.update(id, updateData);
-    
+
     // Return the updated review
     return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
     const result = await this.bookReviewRepository.delete(id);
-    
+
     if (result.affected === 0) {
       throw new NotFoundException(`Book review with ID "${id}" not found`);
     }

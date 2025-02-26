@@ -10,4 +10,4 @@ import { Author } from './entities/author.entity';
   providers: [AuthorsService],
   exports: [AuthorsService],
 })
-export class AuthorsModule { }
+export class AuthorsModule {}

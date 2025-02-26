@@ -7,13 +7,9 @@ import { AuthorsModule } from 'src/authors/authors.module';
 import { CategoriesModule } from 'src/categories/categories.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Book]),
-    AuthorsModule,
-    CategoriesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Book]), AuthorsModule, CategoriesModule],
   controllers: [BooksController],
   providers: [BooksService],
   exports: [BooksService],
 })
-export class BooksModule { }
+export class BooksModule {}

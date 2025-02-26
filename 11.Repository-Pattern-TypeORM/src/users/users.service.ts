@@ -7,44 +7,44 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private usersRepository: Repository<User>,
-    ) { }
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-    findAll(): Promise<User[]> {
-        return this.usersRepository.find({
-            relations: ['profile', 'bookReviews'],
-        });
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find({
+      relations: ['profile', 'bookReviews'],
+    });
+  }
+
+  async findOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['profile', 'bookReviews'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    async findOne(id: string): Promise<User> {
-        const user = await this.usersRepository.findOne({
-            where: { id },
-            relations: ['profile', 'bookReviews'],
-        });
+    return user;
+  }
 
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.usersRepository.create(createUserDto);
+    return await this.usersRepository.save(user);
+  }
 
-        return user;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    await this.usersRepository.update(id, updateUserDto);
+    return this.findOne(id);
+  }
+
+  async remove(id: string): Promise<void> {
+    const result = await this.usersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
-
-    async create(createUserDto: CreateUserDto): Promise<User> {
-        const user = this.usersRepository.create(createUserDto);
-        return await this.usersRepository.save(user);
-    }
-
-    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        await this.usersRepository.update(id, updateUserDto);
-        return this.findOne(id);
-    }
-
-    async remove(id: string): Promise<void> {
-        const result = await this.usersRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-    }
+  }
 }

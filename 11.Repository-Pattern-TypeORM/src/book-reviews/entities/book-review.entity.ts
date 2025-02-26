@@ -1,27 +1,26 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Book } from 'src/books/entities/book.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+import { Book } from '../../books/entities/book.entity';
 
-@Entity('book_reviews')
+@Entity()
 export class BookReview {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ type: 'int' })
-    rating: number;
+  @Column('text')
+  content: string;
 
-    @Column({ type: 'text', nullable: true })
-    comment: string;
+  @Column()
+  rating: number;
 
-    @ManyToOne(() => Book, book => book.reviews)
-    book: Book;
+  @ManyToOne(() => User, user => user.bookReviews)
+  @JoinColumn()
+  user: User;
 
-    @ManyToOne(() => User, user => user.bookReviews)
-    user: User;
+  @ManyToOne(() => Book, book => book.reviews)
+  @JoinColumn()
+  book: Book;
 
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }

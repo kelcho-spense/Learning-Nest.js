@@ -1,28 +1,36 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsUUID, IsBoolean, IsArray } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsArray,
+} from 'class-validator';
 
 export class CreateBookDto {
-    @IsNotEmpty()
-    @IsString()
-    title: string;
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    @IsOptional()
-    @IsString()
-    description: string;
+  @IsOptional()
+  @IsString()
+  description: string;
 
-    @IsNotEmpty()
-    @IsNumber()
-    publicationYear: number;
+  @IsNotEmpty()
+  @IsNumber()
+  publicationYear: number;
 
-    @IsOptional()
-    @IsBoolean()
-    isAvailable: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isAvailable: boolean;
 
-    @IsNotEmpty()
-    @IsUUID()
-    authorId: string;
+  @IsNotEmpty()
+  @IsUUID()
+  authorId: string;
 
-    @IsOptional()
-    @IsArray()
-    @IsUUID('4', { each: true })
-    categoryIds: string[];
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  categoryIds: string[];
 }

@@ -14,7 +14,7 @@ export class BooksService {
     private booksRepository: Repository<Book>,
     private authorsService: AuthorsService,
     private categoriesService: CategoriesService,
-  ) { }
+  ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     const book = new Book();
@@ -30,7 +30,9 @@ export class BooksService {
     // Set categories if provided
     if (createBookDto.categoryIds && createBookDto.categoryIds.length > 0) {
       book.categories = await Promise.all(
-        createBookDto.categoryIds.map(id => this.categoriesService.findOne(id))
+        createBookDto.categoryIds.map((id) =>
+          this.categoriesService.findOne(id),
+        ),
       );
     }
 
@@ -60,9 +62,12 @@ export class BooksService {
     const book = await this.findOne(id);
 
     if (updateBookDto.title) book.title = updateBookDto.title;
-    if (updateBookDto.description !== undefined) book.description = updateBookDto.description;
-    if (updateBookDto.publicationYear) book.publicationYear = updateBookDto.publicationYear;
-    if (updateBookDto.isAvailable !== undefined) book.isAvailable = updateBookDto.isAvailable;
+    if (updateBookDto.description !== undefined)
+      book.description = updateBookDto.description;
+    if (updateBookDto.publicationYear)
+      book.publicationYear = updateBookDto.publicationYear;
+    if (updateBookDto.isAvailable !== undefined)
+      book.isAvailable = updateBookDto.isAvailable;
 
     // Update author if provided
     if (updateBookDto.authorId) {
@@ -72,7 +77,9 @@ export class BooksService {
     // Update categories if provided
     if (updateBookDto.categoryIds) {
       book.categories = await Promise.all(
-        updateBookDto.categoryIds.map(id => this.categoriesService.findOne(id))
+        updateBookDto.categoryIds.map((id) =>
+          this.categoriesService.findOne(id),
+        ),
       );
     }
 

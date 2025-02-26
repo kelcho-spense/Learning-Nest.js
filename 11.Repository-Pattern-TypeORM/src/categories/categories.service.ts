@@ -10,7 +10,7 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-  ) { }
+  ) {}
 
   create(createCategoryDto: CreateCategoryDto) {
     const category = this.categoriesRepository.create(createCategoryDto);
@@ -29,7 +29,10 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
     await this.categoriesRepository.update(id, updateCategoryDto);
     return this.findOne(id);
   }
