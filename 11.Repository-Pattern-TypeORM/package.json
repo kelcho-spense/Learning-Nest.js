@@ -1,7 +1,7 @@
 {
   "name": "11.Repository-Pattern-TypeORM",
   "version": "0.0.1",
-  "description": "",
+  "description": "BookVault API",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@faker-js/faker": "^9.5.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",

@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BooksService } from './books.service';
 import { BooksController } from './books.controller';
 import { Book } from './entities/book.entity';
-import { AuthorsModule } from '../authors/authors.module';
-import { CategoriesModule } from '../categories/categories.module';
+import { AuthorsModule } from 'src/authors/authors.module';
+import { CategoriesModule } from 'src/categories/categories.module';
 
 @Module({
   imports: [

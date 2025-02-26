@@ -6,7 +6,6 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
-import { Category } from 'src/categories/entities/category.entity';
 
 @Injectable()
 export class BooksService {

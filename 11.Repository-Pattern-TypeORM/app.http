@@ -78,7 +78,7 @@ POST {{localhost}}/users
 Content-Type: application/json
 
 {
-  "username": "johndoe",
+  "name": "johndoe",
   "email": "john.doe@example.com",
   "password": "securepassword123"
 }
@@ -88,7 +88,7 @@ PATCH {{localhost}}/users/1
 Content-Type: application/json
 
 {
-  "username": "johndoe",
+  "name": "johndoe",
   "email": "john.doe@example.com"
 }
 
@@ -200,3 +200,4 @@ Content-Type: application/json
 
 ### Delete book review
 DELETE {{localhost}}/books-reviews/1
+

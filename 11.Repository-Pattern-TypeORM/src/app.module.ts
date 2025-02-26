@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { BookReviewsModule } from './book-reviews/book-reviews.module';
 import { BookReview } from './book-reviews/entities/book-review.entity';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BookReview } from './book-reviews/entities/book-review.entity';
     }),
     TypeOrmModule.forFeature([Book, Author, Category, Profile, User, BookReview]),
     BookReviewsModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, ManyToMany, OneToMany, JoinTable, PrimaryGeneratedColumn } from 'typeorm';
-import { Author } from '../../authors/entities/author.entity';
-import { Category } from '../../categories/entities/category.entity';
-import { BookReview } from '../../book-reviews/entities/book-review.entity';
+import { Author } from 'src/authors/entities/author.entity';
+import { Category } from 'src/categories/entities/category.entity';
+import { BookReview } from 'src/book-reviews/entities/book-review.entity';
 
 @Entity()
 export class Book {
