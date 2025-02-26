@@ -1,18 +1,32 @@
-import { Author } from "src/authors/entities/author.entity";
-import { Category } from "src/categories/entities/category.entity";
-import { Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, ManyToMany, OneToMany, JoinTable, PrimaryGeneratedColumn } from 'typeorm';
+import { Author } from '../../authors/entities/author.entity';
+import { Category } from '../../categories/entities/category.entity';
+import { BookReview } from '../../book-reviews/entities/book-review.entity';
 
 @Entity()
 export class Book {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    // Many-to-One Relationship with Author
-    @ManyToOne(() => Author, (author) => author.books)
+    @Column()
+    title: string;
+
+    @Column({ nullable: true })
+    description: string;
+
+    @Column()
+    publicationYear: number;
+
+    @Column({ default: true })
+    isAvailable: boolean;
+
+    @ManyToOne(() => Author, author => author.books)
     author: Author;
-    
-    // Many-to-Many Relationship with Categories
-    @ManyToMany(() => Category, (category) => category.books)
-    @JoinTable() // This decorator will create a join table for many-to-many relationship
+
+    @ManyToMany(() => Category, category => category.books)
+    @JoinTable()
     categories: Category[];
+
+    @OneToMany(() => BookReview, review => review.book)
+    reviews: BookReview[];
 }

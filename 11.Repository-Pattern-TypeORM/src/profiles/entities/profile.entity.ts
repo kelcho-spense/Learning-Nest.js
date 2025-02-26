@@ -1,12 +1,18 @@
-import { Author } from "src/authors/entities/author.entity";
-import { Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
-@Entity()
+@Entity('profiles')
 export class Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // One-to-One Relationship with Author
-    @OneToOne(() => Author)
-    author: Author;
+    @Column({ nullable: true, type: 'text' })
+    bio: string;
+
+    @Column({ nullable: true })
+    avatar: string;
+
+    @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' })
+    user: User;
 }

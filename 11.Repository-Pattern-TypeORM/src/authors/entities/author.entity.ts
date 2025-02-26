@@ -1,18 +1,23 @@
-import { Book } from "src/books/entities/book.entity";
-import { Profile } from "src/profiles/entities/profile.entity";
-import { Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Book } from '../../books/entities/book.entity'; // Assuming there's a Book entity
 
 @Entity()
 export class Author {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-    // One-to-One Relationship with Profile
-    @OneToOne(() => Profile)
-    @JoinColumn() // The profile will have a foreign key to Author
-    profile: Profile;
+    @Column()
+    name: string;
 
-    // One-to-Many Relationship with Books
-    @OneToMany(() => Book, (book) => book.author)
+    @Column({ nullable: true })
+    bio: string;
+
+    @Column({ nullable: true })
+    birthDate: Date;
+
+    @Column({ default: true })
+    isActive: boolean;
+
+    @OneToMany(() => Book, (book) => book.author, { cascade: true })
     books: Book[];
 }
