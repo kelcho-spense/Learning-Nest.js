@@ -31,7 +31,7 @@ import { SeedModule } from './seed/seed.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'sqlite',
+        type: 'mysql',
         database: configService.getOrThrow<string>('DATABASE') || 'db.sqlite',
         entities: [Book, Author, Category, Profile, User, BookReview],
         synchronize:

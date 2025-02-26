@@ -36,14 +36,14 @@ export class BookReviewsService {
 
   async findAll(): Promise<BookReview[]> {
     return this.bookReviewRepository.find({
-      relations: ['book', 'reviewer'],
+      relations: ['book', 'user'],
     });
   }
 
   async findOne(id: string): Promise<BookReview> {
     const review = await this.bookReviewRepository.findOne({
       where: { id },
-      relations: ['book', 'reviewer'],
+      relations: ['book', 'user'],
     });
 
     if (!review) {

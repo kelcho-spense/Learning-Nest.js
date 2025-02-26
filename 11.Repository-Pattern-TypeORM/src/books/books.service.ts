@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Book } from './entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
+import { BookReview } from '../book-reviews/entities/book-review.entity';
 
 @Injectable()
 export class BooksService {
@@ -14,7 +15,8 @@ export class BooksService {
     private booksRepository: Repository<Book>,
     private authorsService: AuthorsService,
     private categoriesService: CategoriesService,
-  ) {}
+    private dataSource: DataSource,
+  ) { }
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     const book = new Book();
@@ -87,10 +89,45 @@ export class BooksService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.booksRepository.delete(id);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (result.affected === 0) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Find the book with all its relationships
+      const book = await this.booksRepository.findOne({
+        where: { id },
+        relations: ['reviews', 'categories'],
+      });
+
+      if (!book) {
+        throw new NotFoundException(`Book with ID ${id} not found`);
+      }
+
+      // Explicitly delete reviews first if any exist
+      if (book.reviews && book.reviews.length > 0) {
+        const reviewRepository = this.dataSource.getRepository(BookReview);
+        for (const review of book.reviews) {
+          await reviewRepository.remove(review);
+        }
+      }
+
+      // Clear ManyToMany relationships
+      if (book.categories && book.categories.length > 0) {
+        book.categories = [];
+        await queryRunner.manager.save(book);
+      }
+
+      // Finally delete the book itself
+      await queryRunner.manager.remove(book);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }

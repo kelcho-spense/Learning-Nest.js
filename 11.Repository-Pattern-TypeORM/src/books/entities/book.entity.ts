@@ -23,10 +23,10 @@ export class Book {
   @ManyToOne(() => Author, author => author.books)
   author: Author;
 
-  @OneToMany(() => BookReview, review => review.book)
+  @OneToMany(() => BookReview, review => review.book, { cascade: true, onDelete: 'CASCADE' })
   reviews: BookReview[];
 
-  @ManyToMany(() => Category, category => category.books)
+  @ManyToMany(() => Category, category => category.books, { onDelete: 'CASCADE' })
   @JoinTable()
   categories: Category[];
 }

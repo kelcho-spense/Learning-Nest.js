@@ -30,7 +30,7 @@ export class User {
   @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
   profile: Profile;
 
-  @OneToMany(() => BookReview, (bookReview) => bookReview.user)
+  @OneToMany(() => BookReview, (bookReview) => bookReview.user, { cascade: true })
   bookReviews: BookReview[];
 
   @CreateDateColumn()

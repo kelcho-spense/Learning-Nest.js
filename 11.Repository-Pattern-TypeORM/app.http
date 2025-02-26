@@ -136,7 +136,7 @@ GET {{localhost}}/books
 Accept: application/json
 
 ### Get book by ID
-GET {{localhost}}/books/1
+GET {{localhost}}/books/e049e53c-35a7-4427-b833-01979258fd26
 Accept: application/json
 
 ### Create new book
@@ -152,7 +152,7 @@ Content-Type: application/json
 }
 
 ### Update book
-PATCH {{localhost}}/books/1
+PATCH {{localhost}}/books/e049e53c-35a7-4427-b833-01979258fd26
 Content-Type: application/json
 
 {
@@ -162,7 +162,7 @@ Content-Type: application/json
 }
 
 ### Delete book
-DELETE {{localhost}}/books/1
+DELETE {{localhost}}/books/552d0cf9-10d3-442b-bc56-deb3d20659ab
 
 
 ### Book Reviews Endpoints ###
@@ -171,11 +171,7 @@ GET {{localhost}}/book-reviews
 Accept: application/json
 
 ### Get book review by ID
-GET {{localhost}}/book-reviews/1
-Accept: application/json
-
-### Get reviews for a specific book
-GET {{localhost}}/books/1/reviews
+GET {{localhost}}/book-reviews/432b1b44-3339-405b-8024-c3f700266bf9
 Accept: application/json
 
 ### Create new book review
@@ -199,7 +195,7 @@ Content-Type: application/json
 }
 
 ### Delete book review
-DELETE {{localhost}}/book-reviews/1
+DELETE {{localhost}}/book-reviews/432b1b44-3339-405b-8024-c3f700266bf9
 
 
 ### Seed Data Endpoints ###
