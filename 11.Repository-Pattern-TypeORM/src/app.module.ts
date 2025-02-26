@@ -32,7 +32,11 @@ import { SeedModule } from './seed/seed.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        database: configService.getOrThrow<string>('DATABASE') || 'db.sqlite',
+        host: configService.getOrThrow<string>('MYSQL_HOST') || 'localhost',
+        port: configService.getOrThrow<number>('MYSQL_PORT') || 3306,
+        username: configService.getOrThrow<string>('MYSQL_USER'),
+        password: configService.getOrThrow<string>('MYSQL_PASSWORD'),
+        database: configService.getOrThrow<string>('MYSQL_DATABASE'),
         entities: [Book, Author, Category, Profile, User, BookReview],
         synchronize:
           configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
