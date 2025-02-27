@@ -1,14 +1,7 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProfileDto {
-  @IsNotEmpty()
-  @IsString()
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
-
   @IsOptional()
   @IsString()
   bio?: string;
@@ -17,7 +10,15 @@ export class CreateProfileDto {
   @IsString()
   avatar?: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  userId: number;
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  dateOfBirth?: Date;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsUUID()
+  userId: string;
 }

@@ -102,7 +102,7 @@ GET {{localhost}}/profiles
 Accept: application/json
 
 ### Get profile by ID
-GET {{localhost}}/profiles/1
+GET {{localhost}}/profiles/428e3caf-1187-474a-8520-9b284a1914d1
 Accept: application/json
 
 ### Create new profile
@@ -127,7 +127,7 @@ Content-Type: application/json
 }
 
 ### Delete profile
-DELETE {{localhost}}/profiles/1
+DELETE {{localhost}}/profiles/428e3caf-1187-474a-8520-9b284a1914d1
 
 
 ### Books Endpoints ###

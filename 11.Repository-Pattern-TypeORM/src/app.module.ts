@@ -40,6 +40,7 @@ import { SeedModule } from './seed/seed.module';
         entities: [Book, Author, Category, Profile, User, BookReview],
         synchronize:
           configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
+        logging: configService.getOrThrow<string>('NODE_ENV') !== 'production'
       }),
     }),
     TypeOrmModule.forFeature([
@@ -56,4 +57,4 @@ import { SeedModule } from './seed/seed.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

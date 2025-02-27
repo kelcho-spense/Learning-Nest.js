@@ -6,37 +6,46 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Profile } from './entities/profile.entity';
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService) {}
-
-  @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(createProfileDto);
-  }
+  constructor(private readonly profilesService: ProfilesService) { }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Profile[]> {
     return this.profilesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profilesService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Profile> {
+    return this.profilesService.findOne(id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createProfileDto: CreateProfileDto): Promise<Profile> {
+    return this.profilesService.create(createProfileDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profilesService.update(+id, updateProfileDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
+    return this.profilesService.update(id, updateProfileDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profilesService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return this.profilesService.remove(id);
   }
 }
