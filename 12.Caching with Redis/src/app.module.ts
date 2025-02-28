@@ -16,17 +16,16 @@ import { User } from './users/entities/user.entity';
 import { BookReviewsModule } from './book-reviews/book-reviews.module';
 import { BookReview } from './book-reviews/entities/book-review.entity';
 import { SeedModule } from './seed/seed.module';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { createKeyv, Keyv } from '@keyv/redis'
+import { CacheableMemory } from 'cacheable';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    BooksModule,
-    AuthorsModule,
-    CategoriesModule,
-    ProfilesModule,
-    UsersModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -40,7 +39,7 @@ import { SeedModule } from './seed/seed.module';
         entities: [Book, Author, Category, Profile, User, BookReview],
         synchronize:
           configService.getOrThrow<string>('NODE_ENV') !== 'production', // Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
-        logging: configService.getOrThrow<string>('NODE_ENV') !== 'production'
+        // logging: configService.getOrThrow<string>('NODE_ENV') !== 'production'
       }),
     }),
     TypeOrmModule.forFeature([
@@ -51,10 +50,38 @@ import { SeedModule } from './seed/seed.module';
       User,
       BookReview,
     ]),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          ttl: 10000,   // 10 seconds
+          stores: [
+            // First store - in-memory cache
+            // new Keyv({
+            //   store: new CacheableMemory({ ttl: 10000, lruSize: 5000 }),
+            // }),
+            // Second store - Redis cache (fixed approach)
+            createKeyv(configService.get<string>('REDIS_URL') || 'redis://localhost:6379')
+          ]
+        }
+      }
+    }),
+    BooksModule,
+    AuthorsModule,
+    CategoriesModule,
+    ProfilesModule,
+    UsersModule,
     BookReviewsModule,
     SeedModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    }
+  ],
 })
 export class AppModule { }

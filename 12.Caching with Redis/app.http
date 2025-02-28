@@ -211,6 +211,9 @@ Accept: application/json
 GET {{localhost}}/seed/authors
 Accept: application/json
 
+### Seed only categories
+GET {{localhost}}/seed/categories
+Accept: application/json
 ### Seed only books
 GET {{localhost}}/seed/books
 Accept: application/json
@@ -219,9 +222,6 @@ Accept: application/json
 GET {{localhost}}/seed/profiles
 Accept: application/json
 
-### Seed only categories
-GET {{localhost}}/seed/categories
-Accept: application/json
 
 ### Seed only book reviews
 GET {{localhost}}/seed/book-reviews

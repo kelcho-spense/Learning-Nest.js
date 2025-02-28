@@ -22,11 +22,6 @@ import { SeedModule } from './seed/seed.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    BooksModule,
-    AuthorsModule,
-    CategoriesModule,
-    ProfilesModule,
-    UsersModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -51,6 +46,11 @@ import { SeedModule } from './seed/seed.module';
       User,
       BookReview,
     ]),
+    BooksModule,
+    AuthorsModule,
+    CategoriesModule,
+    ProfilesModule,
+    UsersModule,
     BookReviewsModule,
     SeedModule,
   ],
