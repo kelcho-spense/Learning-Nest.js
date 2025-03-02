@@ -18,7 +18,7 @@ import { BookReview } from './book-reviews/entities/book-review.entity';
 import { SeedModule } from './seed/seed.module';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { createKeyv, Keyv } from '@keyv/redis'
+import { createKeyv, Keyv } from '@keyv/redis';
 import { CacheableMemory } from 'cacheable';
 import { AuthModule } from './auth/auth.module';
 
@@ -56,17 +56,20 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          ttl: 10000,   // 10 seconds
+          ttl: 10000, // 10 seconds
           stores: [
             // First store - in-memory cache
             // new Keyv({
             //   store: new CacheableMemory({ ttl: 10000, lruSize: 5000 }),
             // }),
             // Second store - Redis cache (fixed approach)
-            createKeyv(configService.get<string>('REDIS_URL') || 'redis://localhost:6379')
-          ]
-        }
-      }
+            createKeyv(
+              configService.get<string>('REDIS_URL') ||
+                'redis://localhost:6379',
+            ),
+          ],
+        };
+      },
     }),
     BooksModule,
     AuthorsModule,
@@ -83,7 +86,7 @@ import { AuthModule } from './auth/auth.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
-    }
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

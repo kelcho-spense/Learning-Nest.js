@@ -10,4 +10,4 @@ import { Profile } from './entities/profile.entity';
   providers: [ProfilesService],
   exports: [ProfilesService],
 })
-export class ProfilesModule { }
+export class ProfilesModule {}

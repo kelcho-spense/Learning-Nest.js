@@ -12,6 +12,6 @@ export class Category {
   @Column('text', { nullable: true })
   description: string;
 
-  @ManyToMany(() => Book, book => book.categories)
+  @ManyToMany(() => Book, (book) => book.categories)
   books: Book[];
 }

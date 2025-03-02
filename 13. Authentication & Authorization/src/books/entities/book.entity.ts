@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Author } from '../../authors/entities/author.entity';
 import { BookReview } from '../../book-reviews/entities/book-review.entity';
 import { Category } from '../../categories/entities/category.entity';
@@ -20,13 +28,18 @@ export class Book {
   @Column({ default: true })
   isAvailable: boolean;
 
-  @ManyToOne(() => Author, author => author.books)
+  @ManyToOne(() => Author, (author) => author.books)
   author: Author;
 
-  @OneToMany(() => BookReview, review => review.book, { cascade: true, onDelete: 'CASCADE' })
+  @OneToMany(() => BookReview, (review) => review.book, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   reviews: BookReview[];
 
-  @ManyToMany(() => Category, category => category.books, { onDelete: 'CASCADE' })
+  @ManyToMany(() => Category, (category) => category.books, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable()
   categories: Category[];
 }
