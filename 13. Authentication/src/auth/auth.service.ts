@@ -7,7 +7,7 @@ import { CreateAuthDto } from './dto/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { genSalt, hash, compare } from 'bcrypt';
+import * as Bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
@@ -21,8 +21,8 @@ export class AuthService {
   ) { }
 
   private async hashData(data: string): Promise<string> {
-    const salt = await genSalt(10);
-    return await hash(data, salt);
+    const salt = await Bcrypt.genSalt(10);
+    return await Bcrypt.hash(data, salt);
   }
 
   private async getTokens(userId: string, email: string) {
@@ -34,9 +34,7 @@ export class AuthService {
         },
         {
           secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.getOrThrow(
-            'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-          ),
+          expiresIn: 60 * 15, // 15 minutes
         },
       ),
       this.JwtService.signAsync(
@@ -46,9 +44,7 @@ export class AuthService {
         },
         {
           secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.getOrThrow(
-            'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-          ),
+          expiresIn: 60 * 60 * 24 * 7, // 7 days
         },
       ),
     ]);
@@ -111,7 +107,7 @@ export class AuthService {
         `User with email ${AuthData.email} not found`,
       );
     // compare hashed password with the password provided
-    const passwordMatch = await compare(AuthData.password, foundUser.password);
+    const passwordMatch = await Bcrypt.compare(AuthData.password, foundUser.password);
     // if not throw an error
     if (!passwordMatch) throw new UnauthorizedException('Wrong credentials');
     // if correct generate tokens
@@ -147,7 +143,7 @@ export class AuthService {
       throw new NotFoundException(`User with id ${userId} not found`);
     // compare hashed refresh token with the refresh token provided
     if (!foundUser.refreshToken) throw new UnauthorizedException('Invalid refresh token');
-    const refreshTokenMatch = await compare(
+    const refreshTokenMatch = await Bcrypt.compare(
       refreshToken,
       foundUser.refreshToken,
     );

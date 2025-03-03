@@ -59,7 +59,7 @@ Content-Type: application/json
 }
 
 ### Delete user
-DELETE {{localhost}}/users/8ce675ff-019e-4b9c-8147-f6e76dc78ff7
+DELETE {{localhost}}/users/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
 ### Authors Endpoints ###
 # Get all authors
 GET {{localhost}}/authors
