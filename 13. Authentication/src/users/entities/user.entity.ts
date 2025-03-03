@@ -15,14 +15,14 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
   @Column({ type: 'text' })
   password: string;
 
-  @Column({ type: 'text', nullable: true, default: null })
-  refreshToken: string;
+  @Column({ type: 'text', default: null })
+  refreshToken: string | null;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;

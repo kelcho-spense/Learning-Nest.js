@@ -11,7 +11,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+// import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -29,11 +29,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
-  }
+  // @Post()
+  // @HttpCode(HttpStatus.CREATED)
+  // create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  //   return this.usersService.create(createUserDto);
+  // }
 
   @Put(':id')
   update(

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/login.dto';
@@ -14,28 +15,27 @@ import { CreateAuthDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('signup')
+  signUpLocal(@Body() createAuthDto: CreateAuthDto) {
+    return this.authService.signUpLocal(createAuthDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('signin')
+  signInLocal(@Body() createAuthDto: CreateAuthDto) {
+    return this.authService.signInLocal(createAuthDto);
+  }
+  
+  @Get('signout/:id')
+  signOut(@Param('id') id: string) {
+    console.log("signout")
+    return this.authService.signOut(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Get('refresh')
+  refreshTokens(
+    @Query('id') id: string,
+    @Query('refreshToken') refreshToken: string,
+  ) {
+    return this.authService.refreshTokens(id, refreshToken);
   }
 }

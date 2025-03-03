@@ -8,6 +8,7 @@ import { BookReview } from '../book-reviews/entities/book-review.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Profile } from '../profiles/entities/profile.entity';
 import { fakerEN as faker } from '@faker-js/faker';
+import { genSalt, hash, compare } from 'bcrypt';
 
 @Injectable()
 export class SeedService {
@@ -44,9 +45,10 @@ export class SeedService {
       const userCount = 10;
 
       for (let i = 0; i < userCount; i++) {
+
         const user = new User();
         user.email = faker.internet.email();
-        user.password = faker.internet.password();
+        user.password = await hash("password", await genSalt(10));
         users.push(user);
       }
 

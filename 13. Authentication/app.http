@@ -2,6 +2,64 @@
 
 ###  Endpoints ###
 
+### Auth Endpoints ###
+### sign-up new user
+POST {{localhost}}/auth/signup
+Content-Type: application/json
+
+{
+  "email": "kevin@gmail.com",
+  "password": "securepassword123"
+}
+
+### sign-in user
+POST {{localhost}}/auth/signin
+Content-Type: application/json
+
+{
+  "email": "kevin@gmail.com",
+  "password": "securepassword123"
+}
+
+### refresh token for user
+GET {{localhost}}/auth/refresh?id=1&refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIwNzQwNjI4LCJleHAiOjE2MjA3NDQyMjh9.1
+Accept: application/json
+
+### sign-out user
+GET {{localhost}}/auth/signout/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
+Accept: application/json
+
+
+### Users Endpoints ###
+# Get all users
+GET {{localhost}}/users
+Accept: application/json
+
+### Get user by ID
+GET {{localhost}}/users/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
+Accept: application/json
+
+### Create new user
+POST {{localhost}}/users
+Content-Type: application/json
+
+{
+  "name": "johndoe",
+  "email": "john.doe@example.com",
+  "password": "securepassword123"
+}
+
+### Update user
+PATCH {{localhost}}/users/1
+Content-Type: application/json
+
+{
+  "name": "johndoe",
+  "email": "john.doe@example.com"
+}
+
+### Delete user
+DELETE {{localhost}}/users/8ce675ff-019e-4b9c-8147-f6e76dc78ff7
 ### Authors Endpoints ###
 # Get all authors
 GET {{localhost}}/authors
@@ -62,39 +120,6 @@ Content-Type: application/json
 
 ### Delete category
 DELETE {{localhost}}/categories/c7e4bb6f-cb9c-4c33-ab81-638d1ffebdcd
-
-
-### Users Endpoints ###
-# Get all users
-GET {{localhost}}/users
-Accept: application/json
-
-### Get user by ID
-GET {{localhost}}/users/1
-Accept: application/json
-
-### Create new user
-POST {{localhost}}/users
-Content-Type: application/json
-
-{
-  "name": "johndoe",
-  "email": "john.doe@example.com",
-  "password": "securepassword123"
-}
-
-### Update user
-PATCH {{localhost}}/users/1
-Content-Type: application/json
-
-{
-  "name": "johndoe",
-  "email": "john.doe@example.com"
-}
-
-### Delete user
-DELETE {{localhost}}/users/1
-
 
 ### Profiles Endpoints ###
 # Get all profiles
