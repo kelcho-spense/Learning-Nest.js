@@ -16,7 +16,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private JwtService: JwtService,
+    private jwtService: JwtService,
     private configService: ConfigService,
   ) { }
 
@@ -27,27 +27,29 @@ export class AuthService {
 
   private async getTokens(userId: string, email: string) {
     const [at, rt] = await Promise.all([
-      this.JwtService.signAsync(
+      this.jwtService.signAsync(
         {
           sub: userId,
           email: email,
         },
         {
-          secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: 60 * 15, // 15 minutes
+          secret: this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_SECRET'),
+          expiresIn: this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'), // 15 minutes
         },
       ),
-      this.JwtService.signAsync(
+      this.jwtService.signAsync(
         {
           sub: userId,
           email: email,
         },
         {
-          secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: 60 * 60 * 24 * 7, // 7 days
+          secret: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_SECRET'),
+          expiresIn: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'), // 7 days
         },
       ),
     ]);
+    console.log(this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'))
+    console.log(this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'))
     return { accessToken: at, refreshToken: rt };
   }
 
@@ -63,7 +65,7 @@ export class AuthService {
   }
 
   // private decodeToken(token: string) {
-  //   return this.JwtService.verifyAsync(
+  //   return this.jwtService.verifyAsync(
   //     token,
   //     this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
   //   );
@@ -87,7 +89,7 @@ export class AuthService {
     });
     const newUser = await this.usersRepository.save(user);
     // generate tokens
-    const { accessToken, refreshToken } = await this.getTokens(
+    const {accessToken,refreshToken } = await this.getTokens(
       newUser.id,
       newUser.email,
     );
