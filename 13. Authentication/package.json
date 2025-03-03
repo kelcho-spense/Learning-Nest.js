@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-authentication-authorization",
+  "name": "nestjs-authentication",
   "version": "0.0.1",
   "description": "BookVault API",
   "author": "",
@@ -25,6 +25,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",

@@ -15,16 +15,16 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  name: string;
-
-  @Column({ unique: true })
+  @Column({ type: 'text', unique: true })
   email: string;
 
-  @Column()
+  @Column({ type: 'text' })
   password: string;
 
-  @Column({ default: true })
+  @Column({ type: 'text', nullable: true, default: null })
+  refreshToken: string;
+
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
   @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
@@ -35,9 +35,9 @@ export class User {
   })
   bookReviews: BookReview[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

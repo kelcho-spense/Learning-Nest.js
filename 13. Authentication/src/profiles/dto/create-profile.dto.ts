@@ -6,6 +6,9 @@ export class CreateProfileDto {
   @IsString()
   bio?: string;
 
+  @IsString()
+  name: string;
+
   @IsOptional()
   @IsString()
   avatar?: string;

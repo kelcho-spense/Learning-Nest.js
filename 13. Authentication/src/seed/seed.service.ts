@@ -45,7 +45,6 @@ export class SeedService {
 
       for (let i = 0; i < userCount; i++) {
         const user = new User();
-        user.name = faker.person.fullName();
         user.email = faker.internet.email();
         user.password = faker.internet.password();
         users.push(user);
@@ -71,6 +70,7 @@ export class SeedService {
       for (const user of users) {
         const profile = new Profile();
         profile.bio = faker.lorem.paragraph();
+        profile.name = faker.person.fullName();
         profile.dateOfBirth = faker.date.past({ years: 50 });
         profile.location = `${faker.location.city()}, ${faker.location.country()}`;
         profile.user = user;

@@ -12,6 +12,9 @@ export class Profile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column('text')
+  name: string;
+
   @Column('text', { nullable: true })
   bio: string;
 
