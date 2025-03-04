@@ -44,7 +44,7 @@ export class AuthService {
         },
         {
           secret: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'), // 7 days
+          expiresIn: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'), // 60, "2 days", "10h", "7d"
         },
       ),
     ]);
