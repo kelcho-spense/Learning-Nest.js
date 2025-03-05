@@ -48,8 +48,6 @@ export class AuthService {
         },
       ),
     ]);
-    console.log(this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'))
-    console.log(this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'))
     return { accessToken: at, refreshToken: rt };
   }
 
@@ -89,7 +87,7 @@ export class AuthService {
     });
     const newUser = await this.usersRepository.save(user);
     // generate tokens
-    const {accessToken,refreshToken } = await this.getTokens(
+    const { accessToken, refreshToken } = await this.getTokens(
       newUser.id,
       newUser.email,
     );
