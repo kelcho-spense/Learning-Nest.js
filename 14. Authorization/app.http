@@ -1,0 +1,258 @@
+@localhost = http://localhost:8000
+
+###  Endpoints ###
+
+### Auth Endpoints ###
+### sign-up new user
+POST {{localhost}}/auth/signup
+Content-Type: application/json
+
+{
+  "email": "kevin@gmail.com",
+  "password": "securepassword123"
+}
+
+### sign-in user
+POST {{localhost}}/auth/signin
+Content-Type: application/json
+
+{
+  "email": "kevin@gmail.com",
+  "password": "securepassword123"
+}
+
+### refresh token for user
+GET {{localhost}}/auth/refresh?id=1&refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIwNzQwNjI4LCJleHAiOjE2MjA3NDQyMjh9.1
+Accept: application/json
+
+### sign-out user
+GET {{localhost}}/auth/signout/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
+Accept: application/json
+
+
+### Users Endpoints ###
+# Get all users
+GET {{localhost}}/users
+Accept: application/json
+
+### Get user by ID
+GET {{localhost}}/users/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
+Accept: application/json
+
+### Create new user
+POST {{localhost}}/users
+Content-Type: application/json
+
+{
+  "name": "johndoe",
+  "email": "john.doe@example.com",
+  "password": "securepassword123"
+}
+
+### Update user
+PATCH {{localhost}}/users/1
+Content-Type: application/json
+
+{
+  "name": "johndoe",
+  "email": "john.doe@example.com"
+}
+
+### Delete user
+DELETE {{localhost}}/users/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
+### Authors Endpoints ###
+# Get all authors
+GET {{localhost}}/authors
+Accept: application/json
+
+### Get author by ID
+GET {{localhost}}/authors/1
+Accept: application/json
+
+### Create new author
+POST {{localhost}}/authors
+Content-Type: application/json
+
+{
+  "name": "J.K. Rowling",
+  "bio": "British author, known for Harry Potter series"
+}
+
+### Update author
+PATCH {{localhost}}/authors/b9c8d241-9a00-4f41-a3b0-4fedd21a434d
+Content-Type: application/json
+
+{
+  "name": "J.K. Rowling",
+  "bio": "British author and philanthropist, best known for Harry Potter series"
+}
+
+### Delete author
+DELETE {{localhost}}/authors/b9c8d241-9a00-4f41-a3b0-4fedd21a434d
+
+
+### Categories Endpoints ###
+# Get all categories
+GET {{localhost}}/categories
+Accept: application/json
+
+### Get category by ID
+GET {{localhost}}/categories/1
+Accept: application/json
+
+### Create new category
+POST {{localhost}}/categories
+Content-Type: application/json
+
+{
+  "name": "Fiction",
+  "description": "Literature that describes imaginary events and people"
+}
+
+### Update category
+PATCH  {{localhost}}/categories/c7e4bb6f-cb9c-4c33-ab81-638d1ffebdcd
+Content-Type: application/json
+
+{
+  "name": "Fiction",
+  "description": "Narrative works created from imagination, not based on real events"
+}
+
+### Delete category
+DELETE {{localhost}}/categories/c7e4bb6f-cb9c-4c33-ab81-638d1ffebdcd
+
+### Profiles Endpoints ###
+# Get all profiles
+GET {{localhost}}/profiles
+Accept: application/json
+
+### Get profile by ID
+GET {{localhost}}/profiles/428e3caf-1187-474a-8520-9b284a1914d1
+Accept: application/json
+
+### Create new profile
+POST {{localhost}}/profiles
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "dateOfBirth": "1990-01-01",
+  "userId": 1
+}
+
+### Update profile
+PATCH {{localhost}}/profiles/1
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "bio": "Book enthusiast and tech lover"
+}
+
+### Delete profile
+DELETE {{localhost}}/profiles/428e3caf-1187-474a-8520-9b284a1914d1
+
+
+### Books Endpoints ###
+# Get all books
+GET {{localhost}}/books
+Accept: application/json
+
+### Get book by ID
+GET {{localhost}}/books/e049e53c-35a7-4427-b833-01979258fd26
+Accept: application/json
+
+### Create new book
+POST {{localhost}}/books
+Content-Type: application/json
+
+{
+  "title": "Harry Potter and the Philosopher's Stone",
+  "isbn": "9780747532699",
+  "publishDate": "1997-06-26",
+  "authorId": 1,
+  "categoryIds": [1]
+}
+
+### Update book
+PATCH {{localhost}}/books/e049e53c-35a7-4427-b833-01979258fd26
+Content-Type: application/json
+
+{
+  "title": "Harry Potter and the Philosopher's Stone",
+  "isbn": "9780747532699",
+  "description": "The first book in the Harry Potter series"
+}
+
+### Delete book
+DELETE {{localhost}}/books/552d0cf9-10d3-442b-bc56-deb3d20659ab
+
+
+### Book Reviews Endpoints ###
+# Get all book reviews
+GET {{localhost}}/book-reviews
+Accept: application/json
+
+### Get book review by ID
+GET {{localhost}}/book-reviews/432b1b44-3339-405b-8024-c3f700266bf9
+Accept: application/json
+
+### Create new book review
+POST {{localhost}}/book-reviews
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "Excellent book! Couldn't PATCH it down.",
+  "bookId": 1,
+  "userId": 1
+}
+
+### Update book review
+PATCH {{localhost}}/book-reviews/1
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Very good book with interesting characters."
+}
+
+### Delete book review
+DELETE {{localhost}}/book-reviews/432b1b44-3339-405b-8024-c3f700266bf9
+
+
+### Seed Data Endpoints ###
+# Seed all data (users, authors, books)
+GET {{localhost}}/seed/all
+Accept: application/json
+
+### Seed only users
+GET {{localhost}}/seed/users
+Accept: application/json
+
+### Seed only authors
+GET {{localhost}}/seed/authors
+Accept: application/json
+
+### Seed only categories
+GET {{localhost}}/seed/categories
+Accept: application/json
+### Seed only books
+GET {{localhost}}/seed/books
+Accept: application/json
+
+### Seed only profiles
+GET {{localhost}}/seed/profiles
+Accept: application/json
+
+
+### Seed only book reviews
+GET {{localhost}}/seed/book-reviews
+Accept: application/json
+
+### Clear all seeded data
+POST {{localhost}}/seed/clear
+Accept: application/json
+
