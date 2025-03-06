@@ -6,11 +6,14 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/login.dto';
 import { Public } from './decorators';
 import { AtGuard, RtGuard } from './guards';
+import { RequestWithUser } from './types';
 
 @Controller('auth')
 export class AuthController {
@@ -38,8 +41,12 @@ export class AuthController {
   @Get('refresh')
   refreshTokens(
     @Query('id') id: string,
-    @Query('refreshToken') refreshToken: string,
+    @Req() req: RequestWithUser,
   ) {
-    return this.authService.refreshTokens(id, refreshToken);
+    const user = req.user;
+    if (user.sub !== id) {
+      throw new UnauthorizedException('Invalid user');
+    }
+    return this.authService.refreshTokens(id, user.refreshToken);
   }
 }

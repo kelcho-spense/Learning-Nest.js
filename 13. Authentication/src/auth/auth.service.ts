@@ -59,7 +59,10 @@ export class AuthService {
   }
 
   private async saveRefreshToken(userId: string, refreshToken: string) {
-    await this.usersRepository.update(userId, { refreshToken });
+    // hash refresh token
+    const hashedRefreshToken = await this.hashData(refreshToken);
+    // save refresh token
+    return this.usersRepository.update(userId, { refreshToken: hashedRefreshToken });
   }
 
   // private decodeToken(token: string) {
@@ -138,12 +141,11 @@ export class AuthService {
     const foundUser = await this.usersRepository.findOne({
       where: { id: userId },
     });
-    console.log(foundUser)
     // check if user exists
     if (!foundUser)
       throw new NotFoundException(`User with id ${userId} not found`);
     // compare hashed refresh token with the refresh token provided
-    if (!foundUser.refreshToken) throw new UnauthorizedException('Invalid refresh token');
+    if (!foundUser.refreshToken) throw new UnauthorizedException('Missing refresh token');
     const refreshTokenMatch = await Bcrypt.compare(
       refreshToken,
       foundUser.refreshToken,
