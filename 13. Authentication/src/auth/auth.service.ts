@@ -138,6 +138,7 @@ export class AuthService {
     const foundUser = await this.usersRepository.findOne({
       where: { id: userId },
     });
+    console.log(foundUser)
     // check if user exists
     if (!foundUser)
       throw new NotFoundException(`User with id ${userId} not found`);

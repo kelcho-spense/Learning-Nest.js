@@ -22,8 +22,9 @@ Content-Type: application/json
 }
 
 ### refresh token for user
-GET {{localhost}}/auth/refresh?id=1&refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIwNzQwNjI4LCJleHAiOjE2MjA3NDQyMjh9.1
+GET {{localhost}}/auth/refresh?id=bb98c8a5-e67d-4463-b903-b576169428fc
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYjk4YzhhNS1lNjdkLTQ0NjMtYjkwMy1iNTc2MTY5NDI4ZmMiLCJlbWFpbCI6ImtldmluQGdtYWlsLmNvbSIsImlhdCI6MTc0MTE5NTkwNSwiZXhwIjoxNzQxODAwNzA1fQ.LWlcHUsrqlolOMfcB84cbwENtF2OZWIizQr0xIX9Pjk
 
 ### sign-out user
 GET {{localhost}}/auth/signout/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
