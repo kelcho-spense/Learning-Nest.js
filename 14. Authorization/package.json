@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-authentication",
+  "name": "nestjs-authorization",
   "version": "0.0.1",
   "description": "BookVault API",
   "author": "",
