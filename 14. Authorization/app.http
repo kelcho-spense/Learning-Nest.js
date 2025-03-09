@@ -35,6 +35,7 @@ Accept: application/json
 # Get all users
 GET {{localhost}}/users
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYjk4YzhhNS1lNjdkLTQ0NjMtYjkwMy1iNTc2MTY5NDI4ZmMiLCJlbWFpbCI6ImtldmluQGdtYWlsLmNvbSIsImlhdCI6MTc0MTU0ODgyNSwiZXhwIjoxNzQxNTQ5NzI1fQ.69469sDYjGJenUbe4_XsnnXXidZ3hic8eggV8MSjJ4g 
 
 ### Get user by ID
 GET {{localhost}}/users/8b471803-0ce4-46fe-8c57-44ec4c2ab69e
