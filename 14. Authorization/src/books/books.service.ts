@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Book } from './entities/book.entity';
@@ -7,6 +7,9 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthorsService } from '../authors/authors.service';
 import { CategoriesService } from '../categories/categories.service';
 import { BookReview } from '../book-reviews/entities/book-review.entity';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { Action } from '../casl/casl-ability.factory/action.enum';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class BooksService {
@@ -16,7 +19,8 @@ export class BooksService {
     private authorsService: AuthorsService,
     private categoriesService: CategoriesService,
     private dataSource: DataSource,
-  ) {}
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) { }
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     const book = new Book();
@@ -55,6 +59,17 @@ export class BooksService {
 
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    return book;
+  }
+
+  async findOneWithPermissionCheck(id: string, user: User): Promise<Book> {
+    const book = await this.findOne(id);
+    const ability = this.caslAbilityFactory.createForUser(user);
+
+    if (!ability.can(Action.Read, book)) {
+      throw new ForbiddenException('You are not allowed to read this book');
     }
 
     return book;

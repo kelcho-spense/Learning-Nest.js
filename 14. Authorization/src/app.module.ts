@@ -22,6 +22,7 @@ import { createKeyv, Keyv } from '@keyv/redis';
 import { CacheableMemory } from 'cacheable';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/guards';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { AtGuard } from './auth/guards';
     BookReviewsModule,
     SeedModule,
     AuthModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [

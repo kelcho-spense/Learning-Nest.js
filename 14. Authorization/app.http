@@ -161,10 +161,13 @@ DELETE {{localhost}}/profiles/428e3caf-1187-474a-8520-9b284a1914d1
 # Get all books
 GET {{localhost}}/books
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYjk4YzhhNS1lNjdkLTQ0NjMtYjkwMy1iNTc2MTY5NDI4ZmMiLCJlbWFpbCI6ImtldmluQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQxNjMyMDc0LCJleHAiOjE3NDE2MzI5NzR9.-mZldn_QzSyazgGQJZ0sbGvOLRM6Ym18VfM7ry6l89g
 
 ### Get book by ID
 GET {{localhost}}/books/e049e53c-35a7-4427-b833-01979258fd26
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYjk4YzhhNS1lNjdkLTQ0NjMtYjkwMy1iNTc2MTY5NDI4ZmMiLCJlbWFpbCI6ImtldmluQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQxNjMyMDc0LCJleHAiOjE3NDE2MzI5NzR9.-mZldn_QzSyazgGQJZ0sbGvOLRM6Ym18VfM7ry6l89g
+
 
 ### Create new book
 POST {{localhost}}/books
@@ -190,6 +193,7 @@ Content-Type: application/json
 
 ### Delete book
 DELETE {{localhost}}/books/552d0cf9-10d3-442b-bc56-deb3d20659ab
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYjk4YzhhNS1lNjdkLTQ0NjMtYjkwMy1iNTc2MTY5NDI4ZmMiLCJlbWFpbCI6ImtldmluQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQxNjMyMDc0LCJleHAiOjE3NDE2MzI5NzR9.-mZldn_QzSyazgGQJZ0sbGvOLRM6Ym18VfM7ry6l89g
 
 
 ### Book Reviews Endpoints ###

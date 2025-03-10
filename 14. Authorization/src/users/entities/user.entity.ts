@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Profile } from 'src/profiles/entities/profile.entity';
 import { BookReview } from 'src/book-reviews/entities/book-review.entity';
+import { Role } from '../role.enum';
 
 @Entity('users')
 export class User {
@@ -20,6 +21,9 @@ export class User {
 
   @Column({ type: 'text' })
   password: string;
+
+  @Column({type: 'enum', enum: Role, default: Role.USER})
+  role: Role;
 
   @Column({ type: 'text', default: null })
   refreshToken: string | null;

@@ -25,12 +25,13 @@ export class AuthService {
     return await Bcrypt.hash(data, salt);
   }
 
-  private async getTokens(userId: string, email: string) {
+  private async getTokens(userId: string, email: string, role: string) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email: email,
+          role: role,
         },
         {
           secret: this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_SECRET'),
@@ -41,6 +42,7 @@ export class AuthService {
         {
           sub: userId,
           email: email,
+          role: role,
         },
         {
           secret: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_SECRET'),
@@ -93,6 +95,7 @@ export class AuthService {
     const { accessToken, refreshToken } = await this.getTokens(
       newUser.id,
       newUser.email,
+      newUser.role,
     );
     // save refresh token
     await this.saveRefreshToken(newUser.id, refreshToken);
@@ -117,6 +120,7 @@ export class AuthService {
     const { accessToken, refreshToken } = await this.getTokens(
       foundUser.id,
       foundUser.email,
+      foundUser.role,
     );
     // save refresh token
     await this.saveRefreshToken(foundUser.id, refreshToken);
@@ -157,6 +161,7 @@ export class AuthService {
     const { accessToken, refreshToken: newRefreshToken } = await this.getTokens(
       foundUser.id,
       foundUser.email,
+      foundUser.role,
     );
     // save refresh token
     await this.updateRefreshToken(foundUser.id, newRefreshToken);
