@@ -13,7 +13,9 @@ async function bootstrap() {
     .addTag('Books').build();
 
     const documentFactory = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, documentFactory);
+    SwaggerModule.setup('api', app, documentFactory,{ // http.domain.com/api that will be used to generate the Swagger UI
+      jsonDocumentUrl: 'api/swagger/json', // http.domain.com/api/swagger/json that will be used to generate the JSON file
+    });
 
   app.useGlobalPipes(new ValidationPipe());
   const configService = app.get(ConfigService);
