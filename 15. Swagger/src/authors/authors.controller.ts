@@ -13,10 +13,11 @@ import {
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('authors')
 export class AuthorsController {
-  constructor(private readonly authorsService: AuthorsService) {}
+  constructor(private readonly authorsService: AuthorsService) { }
 
   @Post()
   create(@Body() createAuthorDto: CreateAuthorDto) {
@@ -29,11 +30,13 @@ export class AuthorsController {
   }
 
   @Get(':id')
+  @ApiParam({ name:'id', type: String, description: 'author id (uuid)' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.authorsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiParam({ name:'id', type: String, description: 'author id (uuid)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAuthorDto: UpdateAuthorDto,
@@ -43,6 +46,7 @@ export class AuthorsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({ name:'id', type: String, description: 'author id (uuid)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.authorsService.remove(id);
   }
