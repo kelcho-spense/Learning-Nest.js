@@ -11,6 +11,7 @@ import {
 import { BookReviewsService } from './book-reviews.service';
 import { CreateBookReviewDto } from './dto/create-book-review.dto';
 import { UpdateBookReviewDto } from './dto/update-book-review.dto';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('book-reviews')
 export class BookReviewsController {
@@ -27,11 +28,13 @@ export class BookReviewsController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', type: String, description: 'book review id  (uuid)' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.bookReviewsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', type: String, description: 'book review id  (uuid)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateBookReviewDto: UpdateBookReviewDto,
@@ -40,6 +43,7 @@ export class BookReviewsController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', type: String, description: 'book review id  (uuid)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.bookReviewsService.remove(id);
   }

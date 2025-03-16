@@ -45,7 +45,7 @@ export class BooksController {
   @Get(':id')
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new ReadBookPolicyHandler())
-  @ApiParam({ name: 'id', type: String,description: 'Book ID  (Uuid)' })
+  @ApiParam({ name: 'id', type: String,description: 'book id  (uuid)' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
      return await this.booksService.findOne(id);
   }
@@ -53,6 +53,7 @@ export class BooksController {
   @Patch(':id')
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new UpdateBookPolicyHandler())
+  @ApiParam({ name: 'id', type: String,description: 'book id  (uuid)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateBookDto: UpdateBookDto,
@@ -64,6 +65,7 @@ export class BooksController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new DeleteBookPolicyHandler())
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({ name: 'id', type: String,description: 'book id  (uuid)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.booksService.remove(id);
   }
