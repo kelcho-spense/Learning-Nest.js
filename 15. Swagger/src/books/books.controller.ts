@@ -22,6 +22,7 @@ import {
   UpdateBookPolicyHandler,
   DeleteBookPolicyHandler
 } from '../casl/policies/book.policies';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('books')
 export class BooksController {
@@ -44,8 +45,9 @@ export class BooksController {
   @Get(':id')
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new ReadBookPolicyHandler())
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.booksService.findOne(id);
+  @ApiParam({ name: 'id', type: String,description: 'Book ID  (Uuid)' })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+     return await this.booksService.findOne(id);
   }
 
   @Patch(':id')

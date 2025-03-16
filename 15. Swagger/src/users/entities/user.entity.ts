@@ -22,7 +22,7 @@ export class User {
   @Column({ type: 'text' })
   password: string;
 
-  @Column({type: 'enum', enum: Role, default: Role.USER})
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
 
   @Column({ type: 'text', default: null })
