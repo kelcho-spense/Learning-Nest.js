@@ -22,8 +22,9 @@ import {
   UpdateBookPolicyHandler,
   DeleteBookPolicyHandler
 } from '../casl/policies/book.policies';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) { }

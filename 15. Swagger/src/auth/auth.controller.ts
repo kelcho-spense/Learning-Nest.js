@@ -14,7 +14,7 @@ import { CreateAuthDto } from './dto/login.dto';
 import { Public } from './decorators';
 import { AtGuard, RtGuard } from './guards';
 import { RequestWithUser } from './types';
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +39,7 @@ export class AuthController {
     return this.authService.signOut(id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(RtGuard)
   @Get('refresh')
   @ApiQuery({ name: 'id', type: 'string', description: 'user id (uuid)' })

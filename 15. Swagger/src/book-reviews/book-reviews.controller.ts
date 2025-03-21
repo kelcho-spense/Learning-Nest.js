@@ -11,8 +11,9 @@ import {
 import { BookReviewsService } from './book-reviews.service';
 import { CreateBookReviewDto } from './dto/create-book-review.dto';
 import { UpdateBookReviewDto } from './dto/update-book-review.dto';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('book-reviews')
 export class BookReviewsController {
   constructor(private readonly bookReviewsService: BookReviewsService) {}

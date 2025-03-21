@@ -1,6 +1,8 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { SeedService } from './seed.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('seed')
 export class SeedController {
   constructor(private readonly seedService: SeedService) {}
@@ -47,6 +49,7 @@ export class SeedController {
     return { message: 'Book reviews seeded successfully' };
   }
 
+ 
   @Post('clear')
   async clearDatabase() {
     await this.seedService.clearDatabase();

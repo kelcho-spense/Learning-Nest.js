@@ -13,8 +13,9 @@ import {
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('authors')
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) { }
