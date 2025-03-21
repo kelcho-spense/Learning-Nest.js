@@ -14,10 +14,11 @@ import { CreateAuthDto } from './dto/login.dto';
 import { Public } from './decorators';
 import { AtGuard, RtGuard } from './guards';
 import { RequestWithUser } from './types';
+import { ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('signup')
@@ -30,15 +31,17 @@ export class AuthController {
   signInLocal(@Body() createAuthDto: CreateAuthDto) {
     return this.authService.signInLocal(createAuthDto);
   }
-  
+
   @UseGuards(AtGuard)
   @Get('signout/:id')
+  @ApiParam({ name: 'id', type: 'string', description: 'user id (uuid)' })
   signOut(@Param('id') id: string) {
     return this.authService.signOut(id);
   }
 
   @UseGuards(RtGuard)
   @Get('refresh')
+  @ApiQuery({ name: 'id', type: 'string', description: 'user id (uuid)' })
   refreshTokens(
     @Query('id') id: string,
     @Req() req: RequestWithUser,
