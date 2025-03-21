@@ -231,31 +231,31 @@ DELETE {{localhost}}/book-reviews/432b1b44-3339-405b-8024-c3f700266bf9
 
 ### Seed Data Endpoints ###
 # Seed all data (users, authors, books)
-GET {{localhost}}/seed/all
+POST {{localhost}}/seed/all
 Accept: application/json
 
 ### Seed only users
-GET {{localhost}}/seed/users
+POST {{localhost}}/seed/users
 Accept: application/json
 
 ### Seed only authors
-GET {{localhost}}/seed/authors
+POST {{localhost}}/seed/authors
 Accept: application/json
 
 ### Seed only categories
-GET {{localhost}}/seed/categories
+POST {{localhost}}/seed/categories
 Accept: application/json
 ### Seed only books
-GET {{localhost}}/seed/books
+POST {{localhost}}/seed/books
 Accept: application/json
 
 ### Seed only profiles
-GET {{localhost}}/seed/profiles
+POST {{localhost}}/seed/profiles
 Accept: application/json
 
 
 ### Seed only book reviews
-GET {{localhost}}/seed/book-reviews
+POST {{localhost}}/seed/book-reviews
 Accept: application/json
 
 ### Clear all seeded data
