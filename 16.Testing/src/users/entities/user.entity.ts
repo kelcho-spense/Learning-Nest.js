@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Profile } from 'src/profiles/entities/profile.entity';
-import { BookReview } from 'src/book-reviews/entities/book-review.entity';
+import { Profile } from '../../profiles/entities/profile.entity';
+import { BookReview } from '../../book-reviews/entities/book-review.entity';
 
 @Entity('users')
 export class User {
