@@ -37,15 +37,20 @@ describe('UserController', () => {
         usersController = moduleRef.get<UsersController>(UsersController);
     });
 
-    // describe('findAll', () => {
-    //     it('should return an array of users', async () => {
-    //         const results: User[] = [];
-    //         jest.spyOn(usersService, 'findAll').mockImplementation(() => Promise.resolve(results));
+    describe('findAll', () => {
+        it('should return an array of users', async () => {
+            const users: User[] = [];
+            // mock the service method
+            jest.spyOn(usersService, 'findAll').mockImplementation(() => Promise.resolve(users));
 
-    //         expect(await usersController.findAll()).toEqual(results);
-    //         // expect(await usersController.findAll()).toBeNull();
-    //     });
-    // })
+            const results = await usersController.findAll();
+            expect(results).toEqual(results);
+            expect(usersService.findAll).toHaveBeenCalledWith();
+            //failing test
+            // expect(results).toBeNull();
+            // expect(usersService.findAll).not.toHaveBeenCalled();
+        });
+    })
 
     describe('findOne', () => {
         it('should return a user', async () => {
@@ -84,49 +89,49 @@ describe('UserController', () => {
         });
     });
 
-    // describe('create', () => {
-    //     it('should create a user', async () => {
-    //         // Create a user DTO (what would be sent in the request)
-    //         const createUserDto = {
-    //             name: 'Test User',
-    //             email: 'test@mail.com',
-    //             password: 'password',
-    //         };
+    describe('create', () => {
+        it('should create a user', async () => {
+            // Create a user DTO (what would be sent in the request)
+            const createUserDto = {
+                name: 'Test User',
+                email: 'test@mail.com',
+                password: 'password',
+            };
 
-    //         // Create the expected result
-    //         const mockProfile: Profile = {
-    //             id: randomUUID(),
-    //             bio: 'Test Bio',
-    //             avatar: 'test.jpg',
-    //             dateOfBirth: new Date(),
-    //             location: 'Test Location',
-    //             user: User.prototype,
-    //         };
+            // Create the expected result
+            const mockProfile: Profile = {
+                id: randomUUID(),
+                bio: 'Test Bio',
+                avatar: 'test.jpg',
+                dateOfBirth: new Date(),
+                location: 'Test Location',
+                user: User.prototype,
+            };
 
-    //         const result: User = {
-    //             id: randomUUID(),
-    //             name: 'Test User',
-    //             email: 'test@mail.com',
-    //             password: 'password',
-    //             createdAt: new Date(),
-    //             updatedAt: new Date(),
-    //             isActive: true,
-    //             profile: mockProfile,
-    //             bookReviews: []
-    //         };
+            const result: User = {
+                id: randomUUID(),
+                name: 'Test User',
+                email: 'test@mail.com',
+                password: 'password',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                isActive: true,
+                profile: mockProfile,
+                bookReviews: []
+            };
 
-    //         // Mock the service method
-    //         jest.spyOn(usersService, 'create').mockResolvedValue(result);
+            // Mock the service method
+            jest.spyOn(usersService, 'create').mockResolvedValue(result);
 
-    //         // Call the controller method and verify the result
-    //         const response = await usersController.create(createUserDto);
-    //         expect(response).toEqual(result);
-    //         expect(usersService.create).toHaveBeenCalledWith(createUserDto);
+            // Call the controller method and verify the result
+            const response = await usersController.create(createUserDto);
+            expect(response).toEqual(result);
+            expect(usersService.create).toHaveBeenCalledWith(createUserDto);
 
-    //         // failing test
-    //         // expect(response).toBeNull();
-    //         // expect(usersService.create).not.toHaveBeenCalled();
-    //         // expect(usersService.create).toHaveBeenCalledWith({ name: 'Test User', email: 'test@mail.com'});
-    //     });
-    // });
+            // failing test
+            // expect(response).toBeNull();
+            // expect(usersService.create).not.toHaveBeenCalled();
+            // expect(usersService.create).toHaveBeenCalledWith({ name: 'Test User', email: 'test@mail.com'});
+        });
+    });
 });
