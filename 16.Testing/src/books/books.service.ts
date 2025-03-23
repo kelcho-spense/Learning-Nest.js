@@ -16,7 +16,7 @@ export class BooksService {
     private authorsService: AuthorsService,
     private categoriesService: CategoriesService,
     private dataSource: DataSource,
-  ) { }
+  ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     const book = new Book();

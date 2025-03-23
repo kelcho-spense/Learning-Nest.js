@@ -17,7 +17,7 @@ import { Profile } from './entities/profile.entity';
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService) { }
+  constructor(private readonly profilesService: ProfilesService) {}
 
   @Get()
   findAll(): Promise<Profile[]> {

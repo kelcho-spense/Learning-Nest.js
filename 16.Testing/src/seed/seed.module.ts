@@ -17,10 +17,10 @@ import { Profile } from '../profiles/entities/profile.entity';
       Author,
       BookReview,
       Category,
-      Profile
+      Profile,
     ]),
   ],
   providers: [SeedService],
   controllers: [SeedController],
 })
-export class SeedModule { }
+export class SeedModule {}

@@ -10,7 +10,7 @@ export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private profilesRepository: Repository<Profile>,
-  ) { }
+  ) {}
 
   async findAll(): Promise<Profile[]> {
     return this.profilesRepository
@@ -38,27 +38,30 @@ export class ProfilesService {
       ...createProfileDto,
       user: { id: createProfileDto.userId },
     });
-    
+
     await this.profilesRepository.save(profile);
     return this.findOne(profile.id);
   }
 
-  async update(id: string, updateProfileDto: UpdateProfileDto): Promise<Profile> {
+  async update(
+    id: string,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
     const profile = await this.findOne(id);
-    
+
     // Prepare update object
     const updateData: any = { ...updateProfileDto };
-    
+
     // Remove userId from direct update as we need to handle the relation separately
     delete updateData.userId;
-    
+
     await this.profilesRepository
       .createQueryBuilder()
       .update(Profile)
       .set(updateData)
       .where('id = :id', { id })
       .execute();
-    
+
     // Update the relation if userId is provided
     if (updateProfileDto.userId) {
       await this.profilesRepository
@@ -67,7 +70,7 @@ export class ProfilesService {
         .of(id)
         .set(updateProfileDto.userId);
     }
-    
+
     return this.findOne(id);
   }
 
@@ -78,7 +81,7 @@ export class ProfilesService {
       .from(Profile)
       .where('id = :id', { id })
       .execute();
-    
+
     if (result.affected === 0) {
       throw new NotFoundException(`Profile with ID ${id} not found`);
     }

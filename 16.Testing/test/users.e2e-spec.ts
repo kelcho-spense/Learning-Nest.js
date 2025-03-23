@@ -12,66 +12,96 @@ import { Category } from '../src/categories/entities/category.entity';
 import { Author } from '../src/authors/entities/author.entity';
 
 describe('Users', () => {
-    let app: INestApplication;
+  let app: INestApplication;
 
-    // Better mock with realistic data structure
-    const usersService = {
-        findAll: () => [{
-            id: '1',
-            name: 'Test User',
-            email: 'test@example.com',
-            isActive: true
-        }]
-    };
+  // Better mock with realistic data structure
+  const usersService = {
+    findAll: () => [
+      {
+        id: '1',
+        name: 'Test User',
+        email: 'test@example.com',
+        isActive: true,
+      },
+    ],
+  };
 
-    beforeAll(async () => {
-        const moduleRef = await Test.createTestingModule({
-            imports: [
-                // In-memory SQLite for testing
-                TypeOrmModule.forRoot({
-                    type: 'sqlite',
-                    database: 'database.sqlite',
-                    entities: [User, Profile, BookReview, Book, Author, Category],
-                    synchronize: true,
-                }),
-                UsersModule
-            ],
-        })
-            .overrideProvider(UsersService)
-            .useValue(usersService)
-            .compile();
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        // In-memory SQLite for testing
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'database.sqlite',
+          entities: [User, Profile, BookReview, Book, Author, Category],
+          synchronize: true,
+        }),
+        UsersModule,
+      ],
+    })
+      // .overrideProvider(UsersService)
+      // .useValue(usersService)
+      .compile();
 
-        app = moduleRef.createNestApplication();
-        await app.init();
-    });
+    app = moduleRef.createNestApplication();
+    await app.init();
+  });
 
-    it(`/GET users`, async () => {
-        return request(app.getHttpServer())
-            .get('/users')
-            .expect(200)
-            .then(response => {
-                console.log('Actual response:', response.body);
-                console.log('Expected:', usersService.findAll());
+  it(`/GET users`, async () => {
+    return request(app.getHttpServer())
+      .get('/users')
+      .expect(200)
+      .then((response) => {
+        console.log('Actual response:', response.body);
+        console.log('Expected:', usersService.findAll());
 
-                // More flexible assertion
-                expect(response.status).toBe(200);
+        // More flexible assertion
+        expect(response.status).toBe(200);
 
-                // Check if the response contains the expected data
-                // without requiring exact format match
-                const expectedData = usersService.findAll();
-                expect(response.body).toBeTruthy();
+        // Check if the response contains the expected data
+        // without requiring exact format match
+        expect(response.body).toBeTruthy();
+        expect(response.body).toBeInstanceOf(Array);
+        expect(response.body.length).toBeGreaterThanOrEqual(1);
 
-                // Optional: Deep validation if response is an array
-                if (Array.isArray(response.body)) {
-                    expect(response.body.length).toBeGreaterThanOrEqual(1);
-                    expect(response.body[0].name).toBe(expectedData[0].name);
-                }
-            });
-    });
+        // falling test
+        // expect(response.body).toBeInstanceOf(Object);
+        // expect(response.body.length).toBeLessThanOrEqual(1);
+      });
+  });
 
-    afterAll(async () => {
-        if (app) {
-            await app.close();
-        }
-    });
+  // it('/POST users', async() => {
+  //     return await request(app.getHttpServer())
+  //         .post('/users')
+  //         .send({
+  //             name: '11Test User',
+  //             email: '11test@gmail.com',
+  //             password: "11password",
+  //         })
+  //         .expect(201)
+  //         .then(response => {
+  //             console.log('Actual response:', response.body);
+
+  //             // More flexible assertion
+  //             expect(response.status).toBe(201);
+
+  //             // Check if the response contains the expected data
+  //             // without requiring exact format match
+  //             expect(response.body).toBeTruthy();
+  //             expect(response.body.name).toBe('11Test User');
+  //             expect(response.body.email).toBe('11test@gmail.com');
+
+  //             // fail test
+  //             // expect(response.status).toBe(200);
+  //             // expect(response.body.name).toBe('Test User');
+  //             // expect(response.body.email).toBe('test@gmail.com');
+
+  //         });
+  // });
+
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
+  });
 });
