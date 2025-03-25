@@ -70,34 +70,112 @@ describe('Users', () => {
       });
   });
 
-  // it('/POST users', async() => {
-  //     return await request(app.getHttpServer())
-  //         .post('/users')
-  //         .send({
-  //             name: '11Test User',
-  //             email: '11test@gmail.com',
-  //             password: "11password",
-  //         })
-  //         .expect(201)
-  //         .then(response => {
-  //             console.log('Actual response:', response.body);
+  it('/POST users', async() => {
+      return await request(app.getHttpServer())
+          .post('/users')
+          .send({
+              name: '11Test User',
+              email: '11test@gmail.com',
+              password: "11password",
+          })
+          .expect(201)
+          .then(response => {
+              console.log('Actual response:', response.body);
 
-  //             // More flexible assertion
-  //             expect(response.status).toBe(201);
+              // More flexible assertion
+              expect(response.status).toBe(201);
 
-  //             // Check if the response contains the expected data
-  //             // without requiring exact format match
-  //             expect(response.body).toBeTruthy();
-  //             expect(response.body.name).toBe('11Test User');
-  //             expect(response.body.email).toBe('11test@gmail.com');
+              // Check if the response contains the expected data
+              // without requiring exact format match
+              expect(response.body).toBeTruthy();
+              expect(response.body.name).toBe('11Test User');
+              expect(response.body.email).toBe('11test@gmail.com');
 
-  //             // fail test
-  //             // expect(response.status).toBe(200);
-  //             // expect(response.body.name).toBe('Test User');
-  //             // expect(response.body.email).toBe('test@gmail.com');
+              // fail test
+              // expect(response.status).toBe(200);
+              // expect(response.body.name).toBe('Test User');
+              // expect(response.body.email).toBe('test@gmail.com');
 
-  //         });
-  // });
+          });
+  });
+
+  it('/GET users/:id', async () => {
+    return request(app.getHttpServer())
+      .get('/users/cbe80bc9-608e-4b39-a003-1f55ce9ce479')
+      .expect(200)
+      .then((response) => {
+
+        // More flexible assertion
+        expect(response.status).toBe(200);
+
+        // Check if the response contains the expected data
+        // without requiring exact format match
+        expect(response.body).toBeTruthy();
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.name).toBe('Test User');
+        expect(response.body.email).toBe('test@gmail.com')
+        expect(response.body.isActive).toBe(true);
+
+        // failing test
+        // expect(response.body.name).toBe('1Test User');
+        // expect(response.body.email).toBe('1test@gmail.com')
+        // expect(response.body.isActive).toBe(false);
+      });
+  });
+
+  it('/PUT users/:id', async () => {
+    return request(app.getHttpServer())
+      .put('/users/cbe80bc9-608e-4b39-a003-1f55ce9ce479')
+      .send({
+        name: 'Test User 2',
+        email: 'updatedtest@email.com',
+        isActive: false,
+      })
+      .expect(200)
+      .then((response) => {
+        console.log('Actual response:', response.body);
+
+        // More flexible assertion
+        expect(response.status).toBe(200);
+
+        // Check if the response contains the expected data
+        // without requiring exact format match
+        expect(response.body).toBeTruthy();
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.name).toBe('Test User 2');
+        expect(response.body.email).toBe('updatedtest@email.com');
+        expect(response.body.isActive).toBe(false);
+
+        // failing test
+        // expect(response.body.name).toBe('Test User');
+        // expect(response.body.email).toBe('test@email.com');
+        // expect(response.body.isActive).toBe(true);
+      }
+    );
+  });
+
+  it('/DELETE users/:id', async () => {
+    return request(app.getHttpServer())
+      .delete('/users/cbe80bc9-608e-4b39-a003-1f55ce9ce479')
+      .expect(204)
+      .then((response) => {
+        console.log('Actual response:', response.body);
+
+        // More flexible assertion
+        expect(response.status).toBe(204);
+        
+        // Check if the response contains the expected data
+        // without requiring exact format match
+        expect(response.body).toBeTruthy();
+        expect(response.body).toBeInstanceOf(Object);
+        expect(response.body.message).toBe('User deleted successfully');
+        
+        // failing test
+        // expect(response.status).toBe(200);
+        // expect(response.status).toBe(404);
+        // expect(response.body.message).toBe('User not found');
+      });
+  });
 
   afterAll(async () => {
     if (app) {
