@@ -18,7 +18,7 @@ export class AuthService {
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   private async hashData(data: string): Promise<string> {
     const salt = await Bcrypt.genSalt(10);
@@ -34,8 +34,12 @@ export class AuthService {
           role: role,
         },
         {
-          secret: this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.getOrThrow<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'), // 15 minutes
+          secret: this.configService.getOrThrow<string>(
+            'JWT_ACCESS_TOKEN_SECRET',
+          ),
+          expiresIn: this.configService.getOrThrow<string>(
+            'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+          ), // 15 minutes
         },
       ),
       this.jwtService.signAsync(
@@ -45,8 +49,12 @@ export class AuthService {
           role: role,
         },
         {
-          secret: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.getOrThrow<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'), // 60, "2 days", "10h", "7d"
+          secret: this.configService.getOrThrow<string>(
+            'JWT_REFRESH_TOKEN_SECRET',
+          ),
+          expiresIn: this.configService.getOrThrow<string>(
+            'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+          ), // 60, "2 days", "10h", "7d"
         },
       ),
     ]);
@@ -64,7 +72,9 @@ export class AuthService {
     // hash refresh token
     const hashedRefreshToken = await this.hashData(refreshToken);
     // save refresh token
-    return this.usersRepository.update(userId, { refreshToken: hashedRefreshToken });
+    return this.usersRepository.update(userId, {
+      refreshToken: hashedRefreshToken,
+    });
   }
 
   // private decodeToken(token: string) {
@@ -113,7 +123,10 @@ export class AuthService {
         `User with email ${AuthData.email} not found`,
       );
     // compare hashed password with the password provided
-    const passwordMatch = await Bcrypt.compare(AuthData.password, foundUser.password);
+    const passwordMatch = await Bcrypt.compare(
+      AuthData.password,
+      foundUser.password,
+    );
     // if not throw an error
     if (!passwordMatch) throw new UnauthorizedException('Wrong credentials');
     // if correct generate tokens
@@ -129,14 +142,16 @@ export class AuthService {
   }
 
   async signOut(userId: string) {
-    console.log(userId)
-    const response = await this.usersRepository.createQueryBuilder()
+    console.log(userId);
+    const response = await this.usersRepository
+      .createQueryBuilder()
       .update(User)
       .set({ refreshToken: null })
       .where('id = :id', { id: userId })
       .execute();
 
-    if (!response.affected) throw new NotFoundException(`User with id ${userId} not found`);
+    if (!response.affected)
+      throw new NotFoundException(`User with id ${userId} not found`);
     return { message: 'User signed out successfully' };
   }
 
@@ -149,7 +164,8 @@ export class AuthService {
     if (!foundUser)
       throw new NotFoundException(`User with id ${userId} not found`);
     // compare hashed refresh token with the refresh token provided
-    if (!foundUser.refreshToken) throw new UnauthorizedException('Missing refresh token');
+    if (!foundUser.refreshToken)
+      throw new UnauthorizedException('Missing refresh token');
     const refreshTokenMatch = await Bcrypt.compare(
       refreshToken,
       foundUser.refreshToken,

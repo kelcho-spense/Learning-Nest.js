@@ -45,10 +45,9 @@ export class SeedService {
       const userCount = 10;
 
       for (let i = 0; i < userCount; i++) {
-
         const user = new User();
         user.email = faker.internet.email();
-        user.password = await hash("password", await genSalt(10));
+        user.password = await hash('password', await genSalt(10));
         users.push(user);
       }
 

@@ -1,7 +1,7 @@
 export interface RequestWithUser extends Request {
-  user:{
+  user: {
     sub: string;
     email: string;
     refreshToken: string;
-  } ;
+  };
 }

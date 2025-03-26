@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Book } from './entities/book.entity';
@@ -20,7 +24,7 @@ export class BooksService {
     private categoriesService: CategoriesService,
     private dataSource: DataSource,
     private caslAbilityFactory: CaslAbilityFactory,
-  ) { }
+  ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     const book = new Book();

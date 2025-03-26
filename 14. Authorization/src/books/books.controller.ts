@@ -20,12 +20,12 @@ import {
   ReadBookPolicyHandler,
   CreateBookPolicyHandler,
   UpdateBookPolicyHandler,
-  DeleteBookPolicyHandler
+  DeleteBookPolicyHandler,
 } from '../casl/policies/book.policies';
 
 @Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) { }
+  constructor(private readonly booksService: BooksService) {}
 
   @Post()
   @UseGuards(PoliciesGuard)

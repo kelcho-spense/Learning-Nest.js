@@ -30,7 +30,7 @@ export class AuthController {
   signInLocal(@Body() createAuthDto: CreateAuthDto) {
     return this.authService.signInLocal(createAuthDto);
   }
-  
+
   @UseGuards(AtGuard)
   @Get('signout/:id')
   signOut(@Param('id') id: string) {
@@ -39,10 +39,7 @@ export class AuthController {
 
   @UseGuards(RtGuard)
   @Get('refresh')
-  refreshTokens(
-    @Query('id') id: string,
-    @Req() req: RequestWithUser,
-  ) {
+  refreshTokens(@Query('id') id: string, @Req() req: RequestWithUser) {
     const user = req.user;
     if (user.sub !== id) {
       throw new UnauthorizedException('Invalid user');

@@ -94,7 +94,7 @@ import { CaslModule } from './casl/casl.module';
     {
       provide: APP_GUARD,
       useClass: AtGuard,
-    }
+    },
   ],
 })
 export class AppModule {}

@@ -6,6 +6,16 @@ Role-Based Access Control (RBAC) is an approach to restricting system access to 
 
 CASL is an isomorphic authorization library that allows you to manage user permissions in your application. It provides a flexible and expressive way to define and check permissions.
 
+### What is CASL?
+
+CASL is a JavaScript ability management library that helps you implement authorization in your application. Key features include:
+
+- **Isomorphic**: Works in both front-end and back-end environments
+- **Framework agnostic**: Can be integrated with any JavaScript framework
+- **Declarative syntax**: Permissions are defined using intuitive `can` and `cannot` functions
+- **Conditions support**: Allows for complex permission rules with conditions
+- **Subject support**: Rules can be applied to specific subject types (e.g., User, Book, etc.)
+
 ### Key RBAC Concepts for Beginners:
 
 1. **Roles**: Categories of users with similar access needs (e.g., Admin, User, Editor)
@@ -25,78 +35,14 @@ npm install @casl/ability
 
 ## Basic Setup - Step by Step
 
-### 1. Define Your Ability Types
+### 1. Define Your Action Enum
 
-First, we need to define what types of actions can be performed on what resources. This forms the foundation of our permission system.
-
-Create an `ability` folder with the following files:
+First, define the actions that can be performed on resources. This creates a standardized way to refer to permissions throughout the application:
 
 ```typescript
-// src/ability/ability.factory.ts
-import { MongoAbility, AbilityBuilder, createMongoAbility } from '@casl/ability';
-import { Injectable } from '@nestjs/common';
-import { User, Post, Comment } from '@prisma/client';
-import { Action } from './action.enum';
-
-// Define what resources (subjects) our application has
-type AppSubjects = {
-  User: User;
-  Post: Post;
-  Comment: Comment;
-  all: 'all'; // Special resource type that represents any resource
-};
-
-// Define what our application's ability looks like
-export type AppAbility = MongoAbility<[Action, AppSubjects]>;
-
-@Injectable()
-export class AbilityFactory {
-  // This method creates an ability instance for a specific user
-  createForUser(user: User) {
-    // The ability builder provides methods to define permissions
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
-
-    // Define permissions for ADMIN role
-    if (user.role === 'ADMIN') {
-      // Admin can do anything with any resource
-      can(Action.Manage, 'all');
-    }
-
-    // Define permissions for USER role
-    if (user.role === 'USER') {
-      // Users can read and create posts
-      can(Action.Read, 'Post');
-      can(Action.Create, 'Post');
-      
-      // Users can update and delete only their own posts
-      can([Action.Update, Action.Delete], 'Post', { authorId: user.id });
-      
-      // Similar permissions for comments
-      can(Action.Read, 'Comment');
-      can(Action.Create, 'Comment');
-      can([Action.Update, Action.Delete], 'Comment', { authorId: user.id });
-    }
-
-    // Build and return the ability instance
-    return build();
-  }
-}
-```
-
-Let's break down what's happening in this file:
-
-- We define `AppSubjects` to specify what resources our application has
-- We create an `AppAbility` type that combines actions with subjects
-- The `AbilityFactory` class has a method `createForUser` that builds a set of permissions for a given user
-- For administrators, we grant full access to everything with `can(Action.Manage, 'all')`
-- For regular users, we grant specific permissions with conditions (e.g., they can only update/delete their own posts)
-
-Next, we define the possible actions:
-
-```typescript
-// src/ability/action.enum.ts
+// src/casl/casl-ability.factory/action.enum.ts
 export enum Action {
-  Manage = 'manage', // Special action that represents any action
+  Manage = 'manage', // Special action that represents any action (read, create, update, delete)
   Create = 'create',
   Read = 'read',
   Update = 'update',
@@ -104,25 +50,74 @@ export enum Action {
 }
 ```
 
-This enum makes it easier to consistently refer to the same actions throughout our application.
+### 2. Create the CaslAbilityFactory
 
-### 2. Create an Ability Module
-
-Now we need to make our `AbilityFactory` available to the rest of the application by creating a module:
+Next, create a factory class that will generate ability objects based on the user's role:
 
 ```typescript
-// src/ability/ability.module.ts
-import { Module } from '@nestjs/common';
-import { AbilityFactory } from './ability.factory';
+// src/casl/casl-ability.factory/casl-ability.factory.ts
+import { Injectable } from '@nestjs/common';
+import { AbilityBuilder, createMongoAbility } from '@casl/ability';
+import { Action } from './action.enum';
+import { User } from 'src/users/entities/user.entity';
+import { Role } from 'src/users/role.enum';
+import { Book } from 'src/books/entities/book.entity';
+import { Author } from 'src/authors/entities/author.entity';
+import { Category } from 'src/categories/entities/category.entity';
+import { Profile } from 'src/profiles/entities/profile.entity';
+import { BookReview } from 'src/book-reviews/entities/book-review.entity';
 
-@Module({
-  providers: [AbilityFactory],  // Register the factory as a provider
-  exports: [AbilityFactory],    // Make it available to other modules
-})
-export class AbilityModule {}
+@Injectable()
+export class CaslAbilityFactory {
+  createForUser(user: User) {
+    const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
+
+    if (user.role === Role.ADMIN) {
+      // Admin can manage all resources
+      can(Action.Manage, 'all');
+    } else if (user.role === Role.USER) {
+      // Books permissions - read only
+      can(Action.Read, Book);
+
+      // Categories permissions - read only
+      can(Action.Read, Category);
+
+      // Authors permissions - read only
+      can(Action.Read, Author);
+
+      // Profile permissions - users can manage their own profile
+      can([Action.Read, Action.Update], Profile, { user: { id: user.id } });
+
+      // BookReviews permissions - full control over own reviews
+      can(Action.Create, BookReview);
+      can(Action.Read, BookReview);
+      can([Action.Update, Action.Delete], BookReview, { user: { id: user.id } });
+
+      // User permissions - can only read and update themselves
+      can(Action.Read, User, { id: user.id });
+      can(Action.Update, User, { id: user.id });
+
+      // Explicitly deny certain actions
+      cannot(Action.Delete, User);
+      cannot([Action.Create, Action.Update, Action.Delete], Book);
+      cannot([Action.Create, Action.Update, Action.Delete], Author);
+      cannot([Action.Create, Action.Update, Action.Delete], Category);
+    }
+
+    return build();
+  }
+}
 ```
 
-In our codebase, we can see the actual implementation in the CASL module:
+This factory creates permissions based on:
+- User role (Admin has full access)
+- Resource type (different rules for different entities)
+- Ownership (users can only update their own profiles, reviews, etc.)
+- Action type (read, create, update, delete)
+
+### 3. Create a CASL Module
+
+Register the CaslAbilityFactory as a provider in a NestJS module:
 
 ```typescript
 // src/casl/casl.module.ts
@@ -130,106 +125,38 @@ import { Module } from '@nestjs/common';
 import { CaslAbilityFactory } from './casl-ability.factory/casl-ability.factory';
 
 @Module({
-    providers: [CaslAbilityFactory],
-    exports: [CaslAbilityFactory],
+  providers: [CaslAbilityFactory],
+  exports: [CaslAbilityFactory],
 })
-export class CaslModule { }
+export class CaslModule {}
 ```
 
-This is a standard NestJS module that registers our ability factory as a provider and exports it for use in other modules.
+Remember to import this module in your AppModule or any feature module where you need authorization.
 
-### 3. Setup Policy Guards
+### 4. Define the PolicyHandler Interface
 
-Guards in NestJS are used to determine whether a request should be handled or not. We'll create a guard that checks if the user has the necessary permissions:
-
-```typescript
-// src/ability/policies.guard.ts
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
-import { CHECK_POLICIES_KEY } from '../casl/decorators/check-policies.decorator';
-import { PolicyHandler } from '../casl/interfaces/policy-handler.interface';
-
-@Injectable()
-export class PoliciesGuard implements CanActivate {
-    constructor(
-        private reflector: Reflector,
-        private caslAbilityFactory: CaslAbilityFactory,
-    ) { }
-
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        // Get policy handlers from route metadata using reflector
-        const policyHandlers = this.reflector.get<PolicyHandler[]>(
-            CHECK_POLICIES_KEY,
-            context.getHandler(),
-        ) || [];
-
-        // If no policies are defined, allow access by default
-        if (policyHandlers.length === 0) {
-            return true; 
-        }
-
-        // Get the user from the request object
-        const { user } = context.switchToHttp().getRequest();
-        if (!user) return false; // No user found, deny access
-
-        // Create an ability instance for this user
-        const ability = this.caslAbilityFactory.createForUser(user);
-
-        // Check if the user satisfies all policy handlers
-        return policyHandlers.every((handler) =>
-            this.execPolicyHandler(handler, ability));
-    }
-
-    // Helper method to execute a policy handler
-    private execPolicyHandler(handler: PolicyHandler, ability: any) {
-        if (typeof handler === 'function') {
-            // If the handler is a function, call it with the ability
-            return handler(ability);
-        }
-        // If it's an object with a handle method, call that method
-        return handler.handle(ability);
-    }
-}
-```
-
-Let's understand this guard:
-
-1. The guard implements NestJS's `CanActivate` interface, which requires a `canActivate` method
-2. It uses NestJS's `Reflector` to access metadata attached to route handlers
-3. It fetches policy handlers from the route's metadata
-4. It extracts the user from the request
-5. It creates an ability instance for that user
-6. It checks if the user satisfies all policy handlers
-7. The `execPolicyHandler` method handles both function-style and class-style policy handlers
-
-### 4. Define Policy Handler Interface
-
-We need to define what a policy handler looks like:
+Create an interface that defines how policy handlers should look:
 
 ```typescript
 // src/casl/interfaces/policy-handler.interface.ts
 import { MongoAbility } from '@casl/ability';
 
-// Interface for class-based policy handlers
 interface IPolicyHandler {
-    handle(ability: MongoAbility): boolean;
+  handle(ability: MongoAbility): boolean;
 }
 
-// Type for function-based policy handlers
 type PolicyHandlerCallback = (ability: MongoAbility) => boolean;
 
-// A policy handler can be either a class or a function
 export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 ```
 
-This interface allows us to create policy handlers in two ways:
-1. As a function that takes an ability and returns a boolean
-2. As a class with a `handle` method that takes an ability and returns a boolean
+This interface allows for two types of policy handlers:
+- Class-based handlers with a `handle` method
+- Function-based handlers that take an ability and return a boolean
 
-### 5. Create Policy Decorators
+### 5. Create a CheckPolicies Decorator
 
-We need a way to attach policy handlers to our route handlers. We'll use a decorator:
+Create a decorator that attaches policy handlers to route handlers:
 
 ```typescript
 // src/casl/decorators/check-policies.decorator.ts
@@ -241,14 +168,66 @@ export const CheckPolicies = (...handlers: PolicyHandler[]) =>
   SetMetadata(CHECK_POLICIES_KEY, handlers);
 ```
 
-This decorator:
-1. Takes one or more policy handlers as arguments
-2. Uses NestJS's `SetMetadata` to attach these handlers to the route handler
-3. Uses a constant key `CHECK_POLICIES_KEY` to identify the metadata
+This decorator will be used on controller methods to specify which permissions are required.
 
-### 6. Create Policy Handler Classes (Optional)
+### 6. Implement the PoliciesGuard
 
-For more complex permission checks, we can create reusable policy handler classes:
+Create a guard that checks if the user has the necessary permissions:
+
+```typescript
+// src/casl/guards/policies.guard.ts
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { CaslAbilityFactory } from '../casl-ability.factory/casl-ability.factory';
+import { CHECK_POLICIES_KEY } from '../decorators/check-policies.decorator';
+import { PolicyHandler } from '../interfaces/policy-handler.interface';
+
+@Injectable()
+export class PoliciesGuard implements CanActivate {
+  constructor(
+    private reflector: Reflector,
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const policyHandlers =
+      this.reflector.get<PolicyHandler[]>(
+        CHECK_POLICIES_KEY,
+        context.getHandler(),
+      ) || [];
+
+    if (policyHandlers.length === 0) {
+      return true; // No policies defined, allow access
+    }
+
+    const { user } = context.switchToHttp().getRequest();
+    if (!user) return false; // No user found, deny access
+
+    const ability = this.caslAbilityFactory.createForUser(user);
+
+    return policyHandlers.every((handler) =>
+      this.execPolicyHandler(handler, ability),
+    );
+  }
+
+  private execPolicyHandler(handler: PolicyHandler, ability: any) {
+    if (typeof handler === 'function') {
+      return handler(ability);
+    }
+    return handler.handle(ability);
+  }
+}
+```
+
+This guard:
+1. Gets policy handlers from route metadata
+2. Retrieves the user from the request
+3. Creates an ability instance for that user
+4. Ensures the user satisfies all policy requirements
+
+### 7. Create Policy Handlers for Resources (Optional)
+
+For cleaner code, you can create reusable policy handler classes:
 
 ```typescript
 // src/casl/policies/book.policies.ts
@@ -257,229 +236,213 @@ import { Book } from 'src/books/entities/book.entity';
 import { Action } from '../casl-ability.factory/action.enum';
 
 export class ReadBookPolicyHandler {
-    handle(ability: MongoAbility) {
-        return ability.can(Action.Read, Book);
-    }
+  handle(ability: MongoAbility) {
+    return ability.can(Action.Read, Book);
+  }
 }
 
 export class CreateBookPolicyHandler {
-    handle(ability: MongoAbility) {
-        return ability.can(Action.Create, Book);
-    }
+  handle(ability: MongoAbility) {
+    return ability.can(Action.Create, Book);
+  }
 }
 
 export class UpdateBookPolicyHandler {
-    handle(ability: MongoAbility) {
-        return ability.can(Action.Update, Book);
-    }
+  handle(ability: MongoAbility) {
+    return ability.can(Action.Update, Book);
+  }
 }
 
 export class DeleteBookPolicyHandler {
-    handle(ability: MongoAbility) {
-        return ability.can(Action.Delete, Book);
-    }
+  handle(ability: MongoAbility) {
+    return ability.can(Action.Delete, Book);
+  }
 }
 ```
 
-These classes encapsulate permission checks for different actions on the Book resource, making our code more maintainable.
+You can create similar policy handlers for other resources like authors, categories, profiles, etc.
 
-### 7. Implement in Controllers
+### 8. Apply Guards in Controllers
 
-Now we can apply our RBAC system in our controllers:
+Now you can apply these guards and policies in your controllers:
 
 ```typescript
-// src/posts/posts.controller.ts
+// Example controller
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { CreatePostDto, UpdatePostDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PoliciesGuard } from '../casl/guards/policies.guard';
 import { CheckPolicies } from '../casl/decorators/check-policies.decorator';
-import { Action } from '../casl/casl-ability.factory/action.enum';
-import { Post as PostModel } from '@prisma/client';
+import { ReadBookPolicyHandler, CreateBookPolicyHandler, UpdateBookPolicyHandler, DeleteBookPolicyHandler } from '../casl/policies/book.policies';
 
-@Controller('posts')
-export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+@Controller('books')
+export class BooksController {
+  constructor(private readonly booksService: BooksService) {}
 
-  // Protected route requiring authentication but no specific permissions
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
-  }
-
-  // Public route without any guards
+  // Public endpoint - no guards
   @Get()
   findAll() {
-    return this.postsService.findAll();
+    return this.booksService.findAll();
   }
 
-  // Public route without any guards
+  // Authentication required, but no specific permissions needed
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+    return this.booksService.findOne(+id);
   }
 
-  // Protected route requiring authentication AND specific permission
+  // Authentication and specific permission required
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Update, 'Post'))
+  @CheckPolicies(new CreateBookPolicyHandler())
+  @Post()
+  create(@Body() createBookDto: CreateBookDto) {
+    return this.booksService.create(createBookDto);
+  }
+
+  // Using functional style policy handler
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Update, Book))
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.booksService.update(+id, updateBookDto);
   }
 
-  // Protected route requiring authentication AND specific permission
+  // Using class-based policy handler
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Delete, 'Post'))
+  @CheckPolicies(new DeleteBookPolicyHandler())
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+    return this.booksService.remove(+id);
   }
 }
 ```
 
-Let's understand what's happening here:
+## Advanced Usage and Patterns
 
-1. Some routes are protected by `JwtAuthGuard` only, which just checks if the user is authenticated
-2. Other routes are protected by both `JwtAuthGuard` and `PoliciesGuard`, which check authentication and permissions
-3. We use the `@CheckPolicies` decorator to define what permissions are required
-4. The policy handler is provided as a function that checks if the user can perform a specific action on a resource
+### Combining Multiple Policies
 
-## Advanced Usage - Real-world Examples
-
-Let's look at how our codebase handles more complex permission scenarios:
+Sometimes you need to check multiple permissions:
 
 ```typescript
-// src/casl/casl-ability.factory/casl-ability.factory.ts
-@Injectable()
-export class CaslAbilityFactory {
-    createForUser(user: User) {
-        const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
-
-        if (user.role === Role.ADMIN) {
-            // Admin can manage all resources
-            can(Action.Manage, 'all');
-        } else if (user.role === Role.USER) {
-            // Books permissions
-            can(Action.Read, Book);
-
-            // Categories permissions
-            can(Action.Read, Category);
-
-            // Authors permissions
-            can(Action.Read, Author);
-
-            // Profile permissions - users can manage their own profile
-            can([Action.Read, Action.Update], Profile, { user: { id: user.id } });
-
-            // BookReviews permissions - full control over own reviews
-            can(Action.Create, BookReview);
-            can(Action.Read, BookReview);
-            can([Action.Update, Action.Delete], BookReview, { user: { id: user.id } });
-
-            // User permissions - can only read and update themselves
-            can(Action.Read, User, { id: user.id });
-        }
-
-        return build();
-    }
+@UseGuards(JwtAuthGuard, PoliciesGuard)
+@CheckPolicies(
+  new ReadBookPolicyHandler(),
+  (ability) => ability.can(Action.Read, User)
+)
+@Get('complex-endpoint')
+complexEndpoint() {
+  // This endpoint requires both permissions
 }
 ```
 
-This implementation shows:
+### Dynamic Subject Instances
 
-1. Role-based permissions (different permissions for ADMIN vs USER)
-2. Resource-specific permissions (different rules for Books, Categories, etc.)
-3. Owner-based permissions (users can only update their own resources)
-4. Multi-action permissions (applying the same rule to multiple actions)
-
-## Access Levels and Route Protection
-
-Below is a table of common routes and their recommended access levels:
-
-| Route            | HTTP Method | Required Role       | Action | Description            |
-| ---------------- | ----------- | ------------------- | ------ | ---------------------- |
-| /posts           | GET         | Any                 | Read   | List all posts         |
-| /posts/:id       | GET         | Any                 | Read   | View a specific post   |
-| /posts           | POST        | User, Admin         | Create | Create a new post      |
-| /posts/:id       | PATCH/PUT   | User (owner), Admin | Update | Update a specific post |
-| /posts/:id       | DELETE      | User (owner), Admin | Delete | Delete a specific post |
-| /users           | GET         | Admin               | Read   | List all users         |
-| /users/:id       | GET         | User (self), Admin  | Read   | View user profile      |
-| /users/:id       | PATCH/PUT   | User (self), Admin  | Update | Update user profile    |
-| /users/:id       | DELETE      | Admin               | Delete | Delete a user          |
-| /admin/dashboard | GET         | Admin               | Read   | Access admin dashboard |
-
-## Testing RBAC Implementation
-
-To test your RBAC implementation, you can:
-
-1. Create users with different roles (e.g., Admin, User)
-2. Generate JWT tokens for these users
-3. Make API requests with these tokens
-4. Verify that access is granted or denied based on the user's role
-
-### Example Test for Post Update:
+For more complex permissions that depend on the actual data:
 
 ```typescript
-// test/posts.e2e-spec.ts
-it('should allow user to update their own post', async () => {
-  // Login as user
-  const loginResponse = await request(app.getHttpServer())
-    .post('/auth/login')
-    .send({ email: 'user@example.com', password: 'password' });
+@Patch(':id')
+async update(@Param('id') id: string, @Body() updateDto, @Request() req) {
+  const resource = await this.service.findOne(id);
   
-  const token = loginResponse.body.access_token;
+  const ability = this.caslAbilityFactory.createForUser(req.user);
+  if (!ability.can(Action.Update, resource)) {
+    throw new ForbiddenException('You are not allowed to update this resource');
+  }
   
-  // Create a post
-  const createResponse = await request(app.getHttpServer())
-    .post('/posts')
-    .set('Authorization', `Bearer ${token}`)
-    .send({ title: 'Test Post', content: 'This is a test post' });
-  
-  const postId = createResponse.body.id;
-  
-  // Update the post
-  return request(app.getHttpServer())
-    .patch(`/posts/${postId}`)
-    .set('Authorization', `Bearer ${token}`)
-    .send({ title: 'Updated Test Post' })
-    .expect(200);
-});
+  return this.service.update(id, updateDto);
+}
+```
 
-it('should not allow user to update another user\'s post', async () => {
-  // Similar setup but trying to update a post not owned by the user
-  // Should return 403 Forbidden
+### Testing Your Authorization Logic
+
+Here's how to test your authorization implementation:
+
+```typescript
+// test authorization logic
+describe('Authorization', () => {
+  it('should allow admins to delete books', async () => {
+    const adminUser = { id: 1, role: Role.ADMIN };
+    const ability = caslAbilityFactory.createForUser(adminUser);
+    
+    expect(ability.can(Action.Delete, Book)).toBeTruthy();
+  });
+
+  it('should not allow regular users to delete books', async () => {
+    const regularUser = { id: 2, role: Role.USER };
+    const ability = caslAbilityFactory.createForUser(regularUser);
+    
+    expect(ability.can(Action.Delete, Book)).toBeFalsy();
+  });
+
+  it('should allow users to update their own profile', async () => {
+    const user = { id: 3, role: Role.USER };
+    const ability = caslAbilityFactory.createForUser(user);
+    const userProfile = new Profile();
+    userProfile.user = { id: 3 } as User;
+    
+    expect(ability.can(Action.Update, userProfile)).toBeTruthy();
+  });
+
+  it('should not allow users to update others profiles', async () => {
+    const user = { id: 4, role: Role.USER };
+    const ability = caslAbilityFactory.createForUser(user);
+    const otherUserProfile = new Profile();
+    otherUserProfile.user = { id: 5 } as User;
+    
+    expect(ability.can(Action.Update, otherUserProfile)).toBeFalsy();
+  });
 });
 ```
 
-## Common Gotchas and Best Practices
+## Common Access Patterns
 
-1. **Authentication vs. Authorization**: Remember that authentication (who you are) is separate from authorization (what you're allowed to do). Always use both together.
+| Resource   | Role  | Permission Pattern |
+|------------|-------|-------------------|
+| Own Profile | User | Can read and update their own profile only |
+| Books      | Admin | Full control (create, read, update, delete) |
+| Books      | User  | Read-only access |
+| Reviews    | User  | Full control over own reviews, read-only for others' reviews |
+| Users      | Admin | Full access to all user data |
+| Users      | User  | Can only see and update their own user data |
 
-2. **Order of Guards**: When using multiple guards, order matters! Put `JwtAuthGuard` before `PoliciesGuard` to ensure the user is authenticated before checking permissions.
+## Troubleshooting Common Issues
 
-3. **Ownership Checks**: For resources that are "owned" by users, ensure your ability factory includes conditions that check the user ID.
+### 1. Guards Not Being Applied
 
-4. **Performance**: For large applications, consider caching abilities or permission results to improve performance.
+**Problem**: Authorization checks are not being performed.
+**Solution**: Ensure guards are properly registered and in the correct order (JwtAuthGuard before PoliciesGuard).
 
-5. **Error Handling**: Provide meaningful error messages when permission is denied.
+### 2. Ownership Checks Not Working
 
-6. **Testing**: Always test your RBAC implementation with different user roles and edge cases.
+**Problem**: Users can access resources they don't own.
+**Solution**: Make sure your condition objects match your database structure exactly.
 
-7. **Defensive Programming**: Never assume that your guards will catch everything. Also perform permission checks in your service layer.
+```typescript
+// Correct
+can(Action.Update, Profile, { user: { id: user.id } });
+
+// Incorrect if your database structure is different
+can(Action.Update, Profile, { userId: user.id });
+```
+
+### 3. Type Errors with MongoAbility
+
+**Problem**: TypeScript errors when working with abilities.
+**Solution**: Properly define subject types in your CASL setup.
 
 ## Best Practices
 
-1. Always use guards on protected routes
-2. Implement fine-grained permissions based on user roles
-3. Test all routes with different user roles
-4. Keep permissions logic separate from business logic
-5. Use decorators for better code readability
-6. Document your permission system for future developers
+1. **Separation of Concerns**: Keep authorization logic separate from business logic
+2. **Consistent Naming**: Use consistent naming for actions (e.g., always use `Action.Read` instead of sometimes using "view" or "get")
+3. **Fail Secure**: Default to denying access and explicitly grant permissions
+4. **Defense in Depth**: Don't rely solely on guards; check permissions in services too
+5. **Test Thoroughly**: Create tests for different roles and edge cases
+6. **Document Your Permissions**: Keep a clear record of what roles can do what
+7. **Use Both Guards and Service-level Checks**: Especially for ownership-based permissions
 
 ## Additional Resources
 
 - [CASL Documentation](https://casl.js.org/v5/en/)
 - [NestJS Authorization](https://docs.nestjs.com/security/authorization)
+- [RBAC Best Practices](https://auth0.com/blog/role-based-access-control-rbac-and-react-apps/)
+- [MongoDB Permissions with CASL](https://casl.js.org/v5/en/guide/mongodb)
