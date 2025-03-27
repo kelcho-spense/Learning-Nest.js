@@ -4,6 +4,7 @@ import inquirer from "inquirer";
 import { GuessNumberService } from "./guess-number/guess-number.service";
 import { RockPaperScissorsService } from "./rock-paper-scissors/rock-paper-scissors.service";
 import { TicTacToeService } from "./tic-tac-toe/tic-tac-toe.service";
+import { JumpingGameService } from "./jumping-game/jumping-game.service";
 
 
 @Injectable()
@@ -17,6 +18,7 @@ class GameStart extends CommandRunner {
     constructor(private readonly guessNumberService: GuessNumberService,
         private readonly rockPaperScissorsService: RockPaperScissorsService,
         private readonly ticTacToeService: TicTacToeService,
+        private readonly jumpingGameService: JumpingGameService,
     ) {
         super();
     }
@@ -34,6 +36,7 @@ class GameStart extends CommandRunner {
                         'Guess the Number', new inquirer.Separator(),
                         'Rock Paper Scissors', new inquirer.Separator(),
                         'Tic Tac Toe', new inquirer.Separator(),
+                        'Kevin Jump Game', new inquirer.Separator(),
                         'Games Instructions / rules', new inquirer.Separator(),
                         'Exit'
                     ],
@@ -50,6 +53,9 @@ class GameStart extends CommandRunner {
                     break;
                 case 'Tic Tac Toe':
                     await this.ticTacToeService.playTicTacToe();
+                    break;
+                case 'Kevin Jump Game':
+                    await this.jumpingGameService.playJumpingGame();
                     break;
                 case 'Games Instructions / rules':
                     this.displayInstructions();
@@ -90,7 +96,16 @@ class GameStart extends CommandRunner {
         console.log("     - The second player (or computer) uses 'O' marks");
         console.log("     - The first player to get three marks in a row (horizontally, vertically, or diagonally) wins");
         console.log("     - If all squares are filled with no winner, the game ends in a draw");
-        console.log("4. Exit: Exit the game.");
+        
+        console.log("4. Kevin Jump Game:");
+        console.log("   • Help Kevin jump over obstacles on a moving path");
+        console.log("   • How to play:");
+        console.log("     - Use UP ARROW or SPACE to make Kevin jump");
+        console.log("     - Avoid obstacles by timing your jumps correctly");
+        console.log("     - Your score increases the longer you survive");
+        console.log("     - Press Q to quit at any time");
+        
+        console.log("5. Exit: Exit the game.");
     }
 }
 
