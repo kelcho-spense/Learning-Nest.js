@@ -2,6 +2,7 @@
 
 NestJS is a versatile framework that can go beyond server-based applications. In this guide, we’ll focus on building a  **NestJS standalone application** , showcasing how to utilize its modular structure and dependency injection to create a CLI-based tool for web scraping. This application will use **[yargs](https://github.com/yargs/yargs)** for command-line input and **[cheerio](https://github.com/cheeriojs/cheerio)** to extract image URLs from a webpage.
 
+
 ### Why a Standalone NestJS Application?
 
 While NestJS is often associated with server-based applications, it also provides the ability to create standalone applications without the overhead of an HTTP server. This makes it ideal for tasks like CLI tools, batch processing, or utilities such as a web scraper.
@@ -11,6 +12,7 @@ As the NestJS docs states:
 > There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest **standalone application** (without any network listeners). The Nest standalone application is a wrapper around the Nest  **IoC container** , which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the standalone application object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted **CRON** jobs. You can even build a **CLI** on top of it.
 
 So we can take advantage of the great Nest features like dependency injection and modular architecture to better organize our scripts, without exposing an HTTP server. Let’s see how we can create a web scraper CLI program!
+
 
 ### Prerequisites
 
@@ -36,6 +38,7 @@ cd nestjs-standalone
 ```
 
 Add the required packages for web scraping and CLI input handling:
+
 
 ```bash
 
@@ -70,6 +73,7 @@ bootstrap();
 #### `args.ts`
 
 The `args.ts` file is responsible for setting up and parsing command-line arguments using the `yargs` library. It defines the structure of the expected inputs, including required options like `--url` and optional flags such as `--save`. By centralizing this logic, the file ensures that command-line validation is standardized and separated from the core application logic, making the application easier to maintain and extend.
+
 
 ```typescript
 
