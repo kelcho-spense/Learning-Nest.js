@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-container {
+            display: none;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 20px;
+            height: 90vh;
+        }
+
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 15px;
+            background-color: #4a69bd;
+            color: white;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4a69bd;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3a559c;
+        }
+
+        .user-item,
+        .group-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .user-item:hover,
+        .group-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .user-item.active,
+        .group-item.active {
+            background-color: #e3f2fd;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background-color: #dcf8c6;
+            border-radius: 8px 0 8px 8px;
+            padding: 10px;
+            margin-left: auto;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background-color: #f2f2f2;
+            border-radius: 0 8px 8px 8px;
+            padding: 10px;
+        }
+
+        .message .sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .message .time {
+            font-size: 11px;
+            color: #999;
+            text-align: right;
+        }
+
+        .create-group-container {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .create-group-container input {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .system-message {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .no-chat-selected {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login-container" id="login-container">
+            <h2>Join Chat</h2>
+            <div class="input-area">
+                <input type="text" id="username-input" placeholder="Enter your username">
+                <button id="login-button">Join</button>
+            </div>
+        </div>
+
+        <div class="chat-container" id="chat-container">
+            <div class="sidebar">
+                <div class="header">Groups</div>
+                <div class="content-area" id="groups-list"></div>
+
+                <div class="create-group-container">
+                    <h3>Create Group</h3>
+                    <input type="text" id="group-id-input" placeholder="Group ID">
+                    <input type="text" id="group-name-input" placeholder="Group Name">
+                    <button id="create-group-button">Create</button>
+
+                    <h3>Join Group</h3>
+                    <input type="text" id="join-group-input" placeholder="Group ID">
+                    <button id="join-group-button">Join</button>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="header" id="chat-header">Select a chat</div>
+                <div class="content-area" id="chat-messages">
+                    <div class="no-chat-selected">Select a group or user to start chatting</div>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="message-input" placeholder="Type a message...">
+                    <button id="send-button" disabled>Send</button>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="header">Online Users</div>
+                <div class="content-area" id="users-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginContainer = document.getElementById('login-container');
+        const chatContainer = document.getElementById('chat-container');
+        const usernameInput = document.getElementById('username-input');
+        const loginButton = document.getElementById('login-button');
+        const groupsList = document.getElementById('groups-list');
+        const usersList = document.getElementById('users-list');
+        const chatHeader = document.getElementById('chat-header');
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const groupIdInput = document.getElementById('group-id-input');
+        const groupNameInput = document.getElementById('group-name-input');
+        const createGroupButton = document.getElementById('create-group-button');
+        const joinGroupInput = document.getElementById('join-group-input');
+        const joinGroupButton = document.getElementById('join-group-button');
+
+        // App State
+        let currentUser = null;
+        let activeChat = { type: null, id: null }; // type: 'group' or 'user'
+        let groups = [];
+        let users = [];
+
+        // Socket Connection
+        const socket = io('http://localhost:3000');
+
+        // Socket Event Listeners
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
+        socket.on('userJoined', (username) => {
+            addSystemMessage(`${username} joined the chat`);
+            // Refresh users list
+            socket.emit('getUsers');
+        });
+
+        socket.on('userLeft', (username) => {
+            addSystemMessage(`${username} left the chat`);
+            // Refresh users list
+            socket.emit('getUsers');
+        });
+
+        socket.on('allUsers', (data) => {
+            users = data;
+            renderUsers();
+        });
+
+        socket.on('allGroups', (data) => {
+            groups = data;
+            renderGroups();
+        });
+
+        socket.on('groupCreated', (group) => {
+            addSystemMessage(`New group created: ${group.name}`);
+            socket.emit('getGroups');
+        });
+
+        socket.on('userJoinedGroup', (data) => {
+            const { group, user } = data;
+            if (activeChat.type === 'group' && activeChat.id === group.id) {
+                addSystemMessage(`${user.username} joined the group`);
+            }
+        });
+
+        socket.on('userLeftGroup', (data) => {
+            const { groupId, user } = data;
+            if (activeChat.type === 'group' && activeChat.id === groupId) {
+                addSystemMessage(`${user.username} left the group`);
+            }
+        });
+
+        socket.on('groupMessage', (data) => {
+            if (activeChat.type === 'group' && activeChat.id === data.groupId) {
+                addChatMessage(data);
+            }
+        });
+
+        socket.on('privateMessage', (data) => {
+            if (activeChat.type === 'user' && activeChat.id === data.sender.clientId) {
+                addChatMessage(data);
+            } else {
+                // TODO: Add notification for new message
+                console.log('New private message from', data.sender.username);
+            }
+        });
+
+        socket.on('error', (error) => {
+            alert(error.message);
+        });
+
+        // UI Event Listeners
+        loginButton.addEventListener('click', login);
+        sendButton.addEventListener('click', sendMessage);
+        createGroupButton.addEventListener('click', createGroup);
+        joinGroupButton.addEventListener('click', joinGroup);
+
+        // Allow Enter key to send message
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Allow Enter key to login
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Functions
+        function login() {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+
+            socket.emit('join', username);
+            currentUser = { username, clientId: socket.id };
+
+            // Hide login, show chat
+            loginContainer.style.display = 'none';
+            chatContainer.style.display = 'grid';
+
+            // Load initial data
+            socket.emit('getGroups');
+            socket.emit('getUsers');
+        }
+
+        function createGroup() {
+            const groupId = groupIdInput.value.trim();
+            const groupName = groupNameInput.value.trim();
+
+            if (!groupId || !groupName) {
+                alert('Please enter both group ID and name');
+                return;
+            }
+
+            socket.emit('createGroup', { groupId, name: groupName });
+
+            // Clear inputs
+            groupIdInput.value = '';
+            groupNameInput.value = '';
+        }
+
+        function joinGroup() {
+            const groupId = joinGroupInput.value.trim();
+
+            if (!groupId) {
+                alert('Please enter a group ID');
+                return;
+            }
+
+            socket.emit('joinGroup', { groupId });
+
+            // Clear input
+            joinGroupInput.value = '';
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            if (activeChat.type === 'group') {
+                socket.emit('groupMessage', {
+                    groupId: activeChat.id,
+                    message
+                });
+            } else if (activeChat.type === 'user') {
+                socket.emit('privateMessage', {
+                    to: activeChat.id,
+                    message
+                });
+            }
+
+            messageInput.value = '';
+        }
+
+        function openGroupChat(groupId) {
+            // Clear current chat
+            activeChat = { type: 'group', id: groupId };
+
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+
+            chatHeader.textContent = `Group: ${group.name}`;
+            chatMessages.innerHTML = '';
+            sendButton.disabled = false;
+
+            // Join the group if not already a member
+            const isGroupMember = group.members.includes(socket.id);
+            if (!isGroupMember) {
+                socket.emit('joinGroup', { groupId });
+            }
+
+            addSystemMessage(`You joined the "${group.name}" group chat`);
+
+            // Mark active group in UI
+            document.querySelectorAll('.group-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.group-item[data-id="${groupId}"]`).classList.add('active');
+
+            // Clear user selection
+            document.querySelectorAll('.user-item').forEach(el => {
+                el.classList.remove('active');
+            });
+        }
+
+        function openPrivateChat(userId, username) {
+            // Don't allow chat with self
+            if (userId === socket.id) return;
+
+            // Clear current chat
+            activeChat = { type: 'user', id: userId };
+
+            chatHeader.textContent = `Chat with: ${username}`;
+            chatMessages.innerHTML = '';
+            sendButton.disabled = false;
+
+            addSystemMessage(`You started a chat with ${username}`);
+
+            // Mark active user in UI
+            document.querySelectorAll('.user-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.user-item[data-id="${userId}"]`).classList.add('active');
+
+            // Clear group selection
+            document.querySelectorAll('.group-item').forEach(el => {
+                el.classList.remove('active');
+            });
+        }
+
+        function addChatMessage(data) {
+            const isFromMe = data.sender.clientId === socket.id;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isFromMe ? 'sent' : 'received'}`;
+
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'sender';
+            senderDiv.textContent = isFromMe ? 'You' : data.sender.username;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = data.message;
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'time';
+            timeDiv.textContent = new Date(data.timestamp).toLocaleTimeString();
+
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(contentDiv);
+            messageDiv.appendChild(timeDiv);
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addSystemMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'system-message';
+            messageDiv.textContent = message;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function renderGroups() {
+            groupsList.innerHTML = '';
+
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'group-item';
+                groupDiv.dataset.id = group.id;
+                groupDiv.textContent = `${group.name} (${group.members.length})`;
+
+                groupDiv.addEventListener('click', () => {
+                    openGroupChat(group.id);
+                });
+
+                groupsList.appendChild(groupDiv);
+            });
+
+            if (groups.length === 0) {
+                const noGroupsDiv = document.createElement('div');
+                noGroupsDiv.textContent = 'No groups available. Create one!';
+                noGroupsDiv.style.padding = '15px';
+                noGroupsDiv.style.color = '#666';
+                groupsList.appendChild(noGroupsDiv);
+            }
+        }
+
+        function renderUsers() {
+            usersList.innerHTML = '';
+
+            users.forEach(user => {
+                // Don't show current user in the list
+                if (user.clientId === socket.id) return;
+
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                userDiv.dataset.id = user.clientId;
+                userDiv.textContent = user.username;
+
+                userDiv.addEventListener('click', () => {
+                    openPrivateChat(user.clientId, user.username);
+                });
+
+                usersList.appendChild(userDiv);
+            });
+
+            if (users.length <= 1) { // Only current user or empty
+                const noUsersDiv = document.createElement('div');
+                noUsersDiv.textContent = 'No other users online';
+                noUsersDiv.style.padding = '15px';
+                noUsersDiv.style.color = '#666';
+                usersList.appendChild(noUsersDiv);
+            }
+        }
+    </script>
+</body>
+
+</html>

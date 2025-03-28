@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NestJS WebSocket Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { display: flex; }
+        .panel { flex: 1; margin: 0 10px; }
+        .messages { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        input, button { margin: 5px 0; padding: 8px; }
+        .user-list { border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <h1>NestJS WebSocket Test Client</h1>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>Basic Gateway</h2>
+            <div id="messages" class="messages"></div>
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button id="sendButton">Send</button>
+            <button id="broadcastButton">Broadcast</button>
+            
+            <h3>Join Chat</h3>
+            <input type="text" id="usernameInput" placeholder="Your username">
+            <button id="joinButton">Join</button>
+            
+            <h3>Active Users</h3>
+            <div id="userList" class="user-list"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>Advanced Gateway</h2>
+            <div id="advancedMessages" class="messages"></div>
+            
+            <h3>Identity</h3>
+            <input type="text" id="nameInput" placeholder="Your name">
+            <button id="identifyButton">Identify</button>
+            
+            <h3>Countdown</h3>
+            <input type="number" id="countInput" placeholder="Count" value="5">
+            <button id="countdownButton">Start Countdown</button>
+            
+            <h3>Async Operation</h3>
+            <button id="asyncButton">Run Async Operation</button>
+        </div>
+    </div>
+
+    <script>
+        // Connect to the default namespace
+        const socket = io('http://localhost:3000');
+        
+        // Connect to the advanced namespace
+        const advancedSocket = io('http://localhost:3000/advanced');
+        
+        // Basic socket functions
+        socket.on('connect', () => {
+            addMessage('Connected to server');
+        });
+        
+        socket.on('disconnect', () => {
+            addMessage('Disconnected from server');
+        });
+        
+        socket.on('broadcast', (data) => {
+            addMessage(`Broadcast received: ${data}`);
+        });
+        
+        socket.on('userJoined', (username) => {
+            addMessage(`${username} joined the chat`);
+        });
+        
+        socket.on('users', (users) => {
+            updateUserList(users);
+        });
+        
+        // Advanced socket functions
+        advancedSocket.on('connect', () => {
+            addAdvancedMessage('Connected to advanced namespace');
+        });
+        
+        advancedSocket.on('identified', (data) => {
+            addAdvancedMessage(`Server response: ${data}`);
+        });
+        
+        advancedSocket.on('countdown', (count) => {
+            addAdvancedMessage(`Countdown: ${count}`);
+        });
+        
+        advancedSocket.on('asyncResult', (data) => {
+            addAdvancedMessage(`Async result: ${data}`);
+        });
+        
+        // UI Event Handlers
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const message = document.getElementById('messageInput').value;
+            if (message) {
+                socket.emit('message', message, (response) => {
+                    addMessage(`Ack received: ${response}`);
+                });
+                document.getElementById('messageInput').value = '';
+            }
+        });
+        
+        document.getElementById('broadcastButton').addEventListener('click', () => {
+            const message = document.getElementById('messageInput').value;
+            if (message) {
+                socket.emit('broadcast', message);
+                document.getElementById('messageInput').value = '';
+            }
+        });
+        
+        document.getElementById('joinButton').addEventListener('click', () => {
+            const username = document.getElementById('usernameInput').value;
+            if (username) {
+                socket.emit('join', username);
+                document.getElementById('usernameInput').value = '';
+            }
+        });
+        
+        document.getElementById('identifyButton').addEventListener('click', () => {
+            const name = document.getElementById('nameInput').value;
+            if (name) {
+                advancedSocket.emit('identify', { name });
+                document.getElementById('nameInput').value = '';
+            }
+        });
+        
+        document.getElementById('countdownButton').addEventListener('click', () => {
+            const count = parseInt(document.getElementById('countInput').value) || 5;
+            advancedSocket.emit('countdown', count);
+        });
+        
+        document.getElementById('asyncButton').addEventListener('click', () => {
+            advancedSocket.emit('asyncOperation', { timestamp: new Date().toISOString() });
+            addAdvancedMessage('Async operation started...');
+        });
+        
+        // Helper functions
+        function addMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function addAdvancedMessage(message) {
+            const messagesDiv = document.getElementById('advancedMessages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function updateUserList(users) {
+            const userListDiv = document.getElementById('userList');
+            userListDiv.innerHTML = '';
+            
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.textContent = user;
+                userListDiv.appendChild(userElement);
+            });
+        }
+    </script>
+</body>
+</html>

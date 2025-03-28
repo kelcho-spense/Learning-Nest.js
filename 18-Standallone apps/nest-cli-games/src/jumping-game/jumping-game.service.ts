@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as readline from 'readline';
 
 @Injectable()
-export class JumpingGameService {
+export class JumpingGameService implements OnModuleInit, OnModuleDestroy {
     private player = {
-        position: 1, // 0: ground, 1: jumping
+        position: 0, // 0: ground, 1: jumping
         character: 'K',
         jumpTick: 0,
         jumpDuration: 3, // how long the jump lasts
@@ -18,6 +18,8 @@ export class JumpingGameService {
     private gameSpeed = 100; // milliseconds per frame
     private pathWidth = 40;
     private gameInterval: NodeJS.Timeout | null = null;
+    private gameStarted = false;
+    private waitingForStart = false;
 
     /**
      * Starts the Kevin Jump Game.
@@ -31,28 +33,18 @@ export class JumpingGameService {
         console.log('Press any key to start...');
 
         // Wait for keypress to start
-        await this.waitForKeyPress();
-        
+        this.waitingForStart = true;
+        await new Promise<void>((resolve) => {
+            const checkInterval = setInterval(() => {
+                if (!this.waitingForStart) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 100);
+        });
 
         this.initGame();
-
-        // Set up key input handling
-        readline.emitKeypressEvents(process.stdin);
-        if (process.stdin.isTTY) {
-            process.stdin.setRawMode(true);
-        }
-
-        process.stdin.on('keypress', (_, key) => {
-            if (key && (key.name === 'q' || key.ctrl && key.name === 'c')) {
-                this.endGame();
-                return;
-            }
-
-            // Jump when up arrow or space is pressed
-            if (key && (key.name === 'up' || key.name === 'space')) {
-                this.jump();
-            }
-        });
+        this.gameStarted = true;
 
         // Start game loop
         this.startGameLoop();
@@ -68,14 +60,11 @@ export class JumpingGameService {
         });
 
         // Clean up
-        if (process.stdin.isTTY) {
-            process.stdin.setRawMode(false);
-        }
-
+        this.gameStarted = false;
         console.log(`\nGame Over! Your score: ${this.score}`);
 
         // Ask to play again
-        const rl = require('readline').createInterface({
+        const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
@@ -93,7 +82,7 @@ export class JumpingGameService {
 
     private initGame(): void {
         this.player = {
-            position: 1,
+            position: 0,
             character: 'K',
             jumpTick: 0,
             jumpDuration: 3,
@@ -197,19 +186,45 @@ export class JumpingGameService {
         }
     }
 
-    private async waitForKeyPress(): Promise<void> {
-        return new Promise(resolve => {
-            readline.emitKeypressEvents(process.stdin);
-            if (process.stdin.isTTY) {
-                process.stdin.setRawMode(true);
+    onModuleInit(): void {
+        // Setup key handling once at the beginning
+        readline.emitKeypressEvents(process.stdin);
+        if (process.stdin.isTTY) {
+            process.stdin.setRawMode(true);
+        }
+
+        process.stdin.on('keypress', (_, key) => {
+            // For game exit
+            if (key && (key.name === 'q' || (key.ctrl && key.name === 'c'))) {
+                this.endGame();
+                if (process.stdin.isTTY) {
+                    process.stdin.setRawMode(false);
+                }
+                process.exit();
+                return;
             }
 
-            const handler = () => {
-                process.stdin.removeListener('keypress', handler);
-                resolve();
-            };
+            // For game start
+            if (this.waitingForStart) {
+                this.waitingForStart = false;
+                return;
+            }
 
-            process.stdin.once('keypress', handler);
+            // Only handle jump if game is in progress
+            if (this.gameStarted && key && (key.name === 'up' || key.name === 'space')) {
+                console.log("Jump triggered!"); // Debug log
+                this.jump();
+            }
         });
+    }
+
+    onModuleDestroy(): void {
+        if (this.gameInterval) {
+            clearInterval(this.gameInterval);
+        }
+        if (process.stdin.isTTY) {
+            process.stdin.setRawMode(false);
+        }
+        process.stdin.removeAllListeners('keypress');
     }
 }
