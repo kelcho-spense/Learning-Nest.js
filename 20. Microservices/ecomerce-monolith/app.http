@@ -1,0 +1,112 @@
+@baseUrl = http://localhost:8000
+@contentType = application/json
+
+### Variables for reuse (update these values after creating resources)
+@userId = 1
+@productId = 1
+@orderId = 1
+
+###############
+### USERS API
+###############
+
+### Create a new user
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+### create mock users
+GET {{baseUrl}}/users/mock
+
+### Get all users
+GET {{baseUrl}}/users
+
+### Get a user by ID
+GET {{baseUrl}}/users/{{userId}}
+
+### Update a user
+PATCH {{baseUrl}}/users/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "name": "John Updated"
+}
+
+### Delete a user
+DELETE {{baseUrl}}/users/{{userId}}
+
+##################
+### PRODUCTS API
+##################
+
+### Create a new product
+POST {{baseUrl}}/products
+Content-Type: {{contentType}}
+
+{
+  "name": "Smartphone",
+  "description": "Latest model with great features",
+  "price": 699.99,
+  "stock": 50
+}
+
+### create mock products
+GET {{baseUrl}}/products/mock
+
+### Get all products
+GET {{baseUrl}}/products
+
+### Get a product by ID
+GET {{baseUrl}}/products/{{productId}}
+
+### Update a product
+PATCH {{baseUrl}}/products/{{productId}}
+Content-Type: {{contentType}}
+
+{
+  "price": 649.99,
+  "stock": 45
+}
+
+### Delete a product
+DELETE {{baseUrl}}/products/{{productId}}
+
+#################
+### ORDERS API
+#################
+
+### Create a new order
+POST {{baseUrl}}/orders
+Content-Type: {{contentType}}
+
+{
+  "userId": {{userId}},
+  "items": [
+    {
+      "productId": {{productId}},
+      "quantity": 2
+    }
+  ]
+}
+
+### Get all orders
+GET {{baseUrl}}/orders
+
+### Get an order by ID
+GET {{baseUrl}}/orders/{{orderId}}
+
+### Update an order status
+PATCH {{baseUrl}}/orders/{{orderId}}
+Content-Type: {{contentType}}
+
+{
+  "OrderStatus": "shipped"
+}
+
+### Delete an order
+DELETE {{baseUrl}}/orders/{{orderId}}
