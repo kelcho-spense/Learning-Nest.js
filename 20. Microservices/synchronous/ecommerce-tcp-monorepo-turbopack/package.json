@@ -1,5 +1,5 @@
 {
-  "name": "ecomerce-tcp-monolipo-turbopack",
+  "name": "ecommerce-tcp-monorepo-turbopack",
   "private": true,
   "scripts": {
     "build": "turbo run build",
