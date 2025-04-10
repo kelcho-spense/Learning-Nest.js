@@ -12,5 +12,6 @@ async function bootstrap() {
   });
  
   await app.listen();
+  console.log('Orders microservice is running on port 4001');
 }
 bootstrap();

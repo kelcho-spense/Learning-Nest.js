@@ -11,5 +11,6 @@ async function bootstrap() {
     },
   });
   await app.listen();
+  console.log('Users microservice is running on port 4003');
 }
 bootstrap();
