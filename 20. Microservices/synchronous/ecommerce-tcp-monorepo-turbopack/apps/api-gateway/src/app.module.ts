@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { USERS_SERVICES, ORDERS_SERVICES, PRODUCTS_SERVICES } from './constants';
+import { MICROSERVICES_CLIENT } from './constants';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: ORDERS_SERVICES,
+        name: MICROSERVICES_CLIENT.ORDERS_SERVICES,
         transport: Transport.TCP,
         options: {
           host: process.env.ORDERS_SERVICE_HOST || 'localhost',
@@ -16,7 +16,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
       {
-        name: PRODUCTS_SERVICES,
+        name: MICROSERVICES_CLIENT.PRODUCTS_SERVICES,
         transport: Transport.TCP,
         options: {
           host: process.env.PRODUCTS_SERVICE_HOST || 'localhost',
@@ -24,7 +24,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
       {
-        name: USERS_SERVICES,
+        name: MICROSERVICES_CLIENT.USERS_SERVICES,
         transport: Transport.TCP,
         options: {
           host: process.env.USERS_SERVICE_HOST || 'localhost',
