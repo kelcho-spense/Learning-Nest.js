@@ -25,7 +25,7 @@ export class OrdersController {
 
   @MessagePattern('updateOrder')
   update(@Payload() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(updateOrderDto.id, updateOrderDto);
+       return this.ordersService.update(updateOrderDto.id, updateOrderDto);
   }
 
   @MessagePattern('removeOrder')
