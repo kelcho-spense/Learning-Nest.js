@@ -29,8 +29,8 @@ Each service communicates with the others using Redis as a message broker throug
 
 1. Install dependencies:
 
-   ```
-   pnpm install
+   ```bash
+   pnpm i typeorm @nestjs/typeorm sqlite3 -w
    ```
 2. Start Redis in docker (make sure Redis is installed):
 
