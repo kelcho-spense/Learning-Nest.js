@@ -1,0 +1,22 @@
+### Get all orders
+GET http://localhost:8000/orders
+### Get order by ID
+GET http://localhost:8000/orders/1
+### Create a new order  
+POST http://localhost:8000/orders
+Content-Type: application/json
+{
+  "customer_id": 1,
+  "product_id": 2,
+  "quantity": 3
+}
+### Update an order by ID
+PATCH http://localhost:8000/orders/1
+
+Content-Type: application/json
+{
+  "customer_id": 1,
+  "product_id": 2,
+  "quantity": 4
+}
+### Delete an order by ID
